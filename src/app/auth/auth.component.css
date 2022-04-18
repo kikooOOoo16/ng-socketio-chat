@@ -1,0 +1,48 @@
+body {
+  background: #c9ccd1;
+}
+
+.form-style input {
+  border: 0;
+  height: 50px;
+  border-radius: 0;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.form-style input:focus {
+  border-bottom: 1px solid #007bff;
+  box-shadow: none;
+  outline: 0;
+  background-color: #ebebeb;
+}
+
+button {
+  font-size: 1.3em;
+  height: 50px;
+  outline: none;
+  border-radius: 0%;
+  border: none;
+  background-color: #974309;
+  transition: background-color 0.4s;
+}
+
+button:hover {
+  background-color: #b18768;
+}
+
+.auth-form-footer-text {
+  line-height: 2.2;
+  font-size: 1.1em;
+  font-family: 'Muli', sans-serif;
+  color: #b18768;
+}
+
+.auth-form-footer-text a {
+  cursor: pointer;
+  transition: 0.2s all;
+}
+
+.auth-form-footer-text a:hover {
+  font-size: 1.4em;
+  color: #b18768;
+}

@@ -1,0 +1,42 @@
+<nav class="nav" #navbar appTrackScroll>
+  <div class="logo">
+    <a class="navbar-brand" routerLink="/chat-rooms">
+      <fa-icon class="nav-icons pr-1" [icon]="faMessage"></fa-icon>
+      My Chat App
+    </a>
+  </div>
+  <div #navbarMainListDiv class="main_list">
+    <ul class="navLinks">
+      <li class="nav-item" routerLinkActive="active">
+        <a class="nav-link ml-2" (click)="toggleDropdown()" routerLink="/chat-rooms-list">Chat Rooms<span
+          class="sr-only">(current)</span></a>
+      </li>
+      <li *ngIf="!isAuthenticated" class="nav-item" [routerLinkActiveOptions]="{exact: true}"
+          routerLinkActive="active">
+        <a class="nav-link" (click)="toggleDropdown()" routerLink="/auth">Sign In
+          <fa-icon class="nav-icons" [icon]="faSignIn"></fa-icon>
+        </a>
+      </li>
+      <li *ngIf="isAuthenticated" class="nav-item" [routerLinkActiveOptions]="{exact: true}"
+          routerLinkActive="active">
+        <a class="nav-link" (click)="toggleDropdown()" routerLink="/profile">Profile</a>
+      </li>
+      <li *ngIf="isAuthenticated" class="nav-item" [routerLinkActiveOptions]="{exact: true}"
+          routerLinkActive="active">
+        <a class="nav-link" (click)="onLogout(); toggleDropdown()" routerLink="/auth">Sign Out
+          <fa-icon class="nav-icons" [icon]="faSignOut"></fa-icon>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <span class="navTrigger" #navbarDropdownMenuLink (click)="toggleDropdown()">
+        <i></i>
+        <i></i>
+        <i></i>
+    </span>
+</nav>
+
+<section class="home">
+  <div appParallax factor=12 class="hero-background"></div>
+  <div class="hero-overlay"></div>
+</section>

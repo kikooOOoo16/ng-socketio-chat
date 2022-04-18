@@ -1,0 +1,33 @@
+<div class="row mt-5 justify-content-center">
+  <div class="col-10">
+    <form [formGroup]="newRoomForm" (ngSubmit)="newRoomFormSubmit()">
+      <div class="mb-3">
+        <label for="roomName" class="form-label">Room Name</label>
+        <input type="text" name="roomName" formControlName="roomName" class="form-control" id="exampleFormControlInput1"
+               placeholder="Enter room name." required>
+        <p class="invalid-input-msg"
+           *ngIf="newRoomForm.get('roomName')!.touched && newRoomForm.get('roomName')!.invalid">
+          Please enter a
+          valid room name.</p>
+      </div>
+      <div class="mb-3">
+        <label for="roomDescription" class="form-label">Description</label>
+        <textarea class="form-control" name="roomDescription" formControlName="roomDescription" rows="3"
+                  placeholder="Enter a description about the room you want to create." required></textarea>
+        <p class="invalid-input-msg"
+           *ngIf="newRoomForm.get('roomDescription')!.touched && newRoomForm.get('roomDescription')!.invalid">
+          Please enter a
+          valid room description.</p>
+      </div>
+      <div class="pb-2 text-center">
+        <button type="submit" class="btn w-50 rounded-0 font-weight-bold mt-2"
+                [disabled]="!newRoomForm.valid">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="row mt-3 justify-content-center">
+  <div class="col-10 text-center">
+    <button class="btn w-25 rounded-0 font-weight-bold mt-2" routerLink="/chat-rooms-list">Go Back</button>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card chat-app">
+        <div class="people-list">
+          <ul class="chat-list mt-2 mb-0">
+            <div *ngIf="usersArray.length > 0; else noUsers">
+              <li *ngFor="let user of usersArray" class="clearfix">
+                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
+                <div class="about">
+                  <div class="name">{{ user.name }}</div>
+                  <div class="status"> <i class="fa fa-circle online"></i> Online </div>
+                </div>
+              </li>
+            </div>
+            <ng-template #noUsers>
+              <li>
+                <div class="about">
+                  There are currently no active users in this room.
+                </div>
+              </li>
+            </ng-template>
+          </ul>
+        </div>
+        <div class="chat">
+          <div class="chat-header clearfix">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="chat-about">
+                  <h6 class="m-b-0">{{roomName}}</h6>
+                  <small>Last message: 2 hours ago</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="chat-history">
+            <ul class="m-b-0">
+              <li class="clearfix">
+                <div class="message-data">
+                  <span class="message-data-time">10:15 AM, Today</span>
+                </div>
+                <div class="message my-message">Project has been already finished and I have results to
+                  show you.</div>
+              </li>
+            </ul>
+          </div>
+          <div class="chat-message clearfix">
+            <div class="input-group mb-0">
+              <div>
+                <span class="input-group-text">
+                  <fa-icon class="nav-icons pr-1" [icon]="faMessage"></fa-icon>
+                </span>
+              </div>
+              <input #chatInput (keyup.enter)="sendMessage()" type="text" class="form-control"
+                     placeholder="Enter text here...">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+.room-btn {
+  border: none;
+  border-radius: 0;
+  color: #ffffff;
+  outline: none;
+  background-color: #974309;
+}
+
+.room-btn:hover {
+  background-color: #b18768;
+}
+
+.navbar {
+  padding: 0;
+  height: 60px;
+}
+
+.nav-item .nav-link:hover {
+  background-color: #8b8b8b;
+}
+
+.nav-link {
+  padding-top: 18px;
+  height: 60px;
+  cursor: pointer;
+}

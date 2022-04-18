@@ -1,0 +1,12 @@
+.btn {
+  background-color: #974309;
+  color: #ffffff;
+}
+
+.btn:disabled {
+  background-color: #656565;
+}
+
+.btn:hover {
+  background-color: #b18768;
+}
