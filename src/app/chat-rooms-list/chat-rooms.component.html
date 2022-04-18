@@ -21,14 +21,21 @@
 <div class="row my-4 text-center">
   <h3>Chat Rooms</h3>
 </div>
-<div class="row">
+<div *ngIf="rooms.length > 0; else noRooms" class="row">
   <div *ngFor="let room of rooms" class="col-xs-12 col-sm-6 col-lg-4 col-xl-3 px-5">
     <div class="card mb-4">
       <div class="card-body text-center">
         <h5 class="card-title">{{room.name}}</h5>
         <p class="card-text">{{room.description}}</p>
-        <a routerLink="/room/12" class="btn room-btn">Enter</a>
+        <a [routerLink]="['/room/', room.name]"  class="btn room-btn">Enter</a>
       </div>
     </div>
   </div>
 </div>
+<ng-template #noRooms>
+  <div class="row text-center">
+    <div class="col-12">
+      <h4>There are no created rooms.</h4>
+    </div>
+  </div>
+</ng-template>

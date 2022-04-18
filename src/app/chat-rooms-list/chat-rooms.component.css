@@ -16,11 +16,27 @@
 }
 
 .nav-item .nav-link:hover {
-  background-color: #8b8b8b;
+  background-color: #BCA265;
 }
 
 .nav-link {
   padding-top: 18px;
   height: 60px;
   cursor: pointer;
+}
+
+li.nav-item a {
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+li.nav-item a:hover {
+
+}
+
+div.container-fluid {
+  background-color: #984911;
 }

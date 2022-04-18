@@ -1,7 +1,8 @@
 import {User} from "./user";
 
 export interface Room {
-  users?: User[];
+  author: string;
   name: string;
   description: string;
+  usersInRoom?: User[];
 }
