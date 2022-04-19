@@ -1,10 +1,13 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {faMessage} from '@fortawesome/free-solid-svg-icons';
 import {SocketService} from "../socket.service";
 import {ActivatedRoute, ParamMap} from "@angular/router";
-import {Room} from "../interfaces/room";
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { Subscription } from 'rxjs';
+
+import {faMessage} from '@fortawesome/free-solid-svg-icons';
+
+import {Room} from "../interfaces/room";
 import {Message} from "../interfaces/message";
+import {User} from "../interfaces/user";
 
 @Component({
   selector: 'app-chat-room',
@@ -16,6 +19,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
 
   @ViewChild('chatInput') chatInput!: ElementRef;
+  @ViewChild('chatHistory') chatHistory!: ElementRef;
   faMessage = faMessage;
   // set initial empty room to avoid template errors
   room: Room = {
@@ -29,7 +33,6 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   constructor(
     private socketService: SocketService,
     private route: ActivatedRoute,
-    // private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -47,27 +50,49 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
 
     // listen for socketIO message response
     const onMessageSub = this.socketService.onReceiveMessage().subscribe((message: any) => {
-      console.log(message);
       this.messages.push(message);
+      // move chat-history to bottom, delay by 1ms
+      setTimeout(() => this.scrollToBottom(), 2);
     });
 
+    // keep sub references in order to unsubscribe later
     this.subscriptions.push(onFetchRoomSub, onMessageSub);
   }
 
   ngOnDestroy(): void {
     // unsubscribe to prevent memory leeks
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    // temporary current user
+    const currentUser: User = {
+      name: 'CurrentUser',
+      email: 'CurrentUser@mail.com'
+    }
+
+    // trigger user leave room
+    this.socketService.leaveRoom(currentUser, this.room.name);
   }
 
   sendMessage = () => {
+    // temporary current user
+    const currentUser: User = {
+      name: 'CurrentUser',
+      email: 'CurrentUser@mail.com'
+    }
     // check if input has anything
     if (this.chatInput.nativeElement.value !== '') {
-      console.log(this.chatInput.nativeElement.value);
-      console.log('Messages state');
-      console.log(this.messages);
+      // call sendMessage on socketService to send socketIO sendMessage req
+      this.socketService.sendMessage(currentUser, this.room.name, this.chatInput.nativeElement.value);
       // reset input
       this.chatInput.nativeElement.value = '';
     }
+  }
+
+  scrollToBottom(): void {
+    this.chatHistory.nativeElement.scroll({
+      top: this.chatHistory.nativeElement.scrollHeight,
+      left: 0,
+      behavior: 'smooth'
+    });
   }
 
 }

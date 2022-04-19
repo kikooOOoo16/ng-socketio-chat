@@ -27,7 +27,7 @@
       <div class="card-body text-center">
         <h5 class="card-title">{{room.name}}</h5>
         <p class="card-text">{{room.description}}</p>
-        <a [routerLink]="['/room/', room.name]"  class="btn room-btn">Enter</a>
+        <a (click)="joinRoom(room.name)"   class="btn room-btn">Enter</a>
       </div>
     </div>
   </div>

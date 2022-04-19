@@ -27,7 +27,7 @@ const config: SocketIoConfig = {
     AuthComponent,
     ChatRoomsComponent,
     NewChatRoomComponent,
-    ChatRoomComponent
+    ChatRoomComponent,
   ],
   imports: [
     SocketIoModule.forRoot(config),

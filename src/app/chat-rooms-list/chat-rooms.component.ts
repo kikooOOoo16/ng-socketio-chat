@@ -2,6 +2,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import { Subscription } from 'rxjs';
 import {Room} from "../interfaces/room";
 import {SocketService} from "../socket.service";
+import {Router} from "@angular/router";
+import {User} from "../interfaces/user";
 
 
 @Component({
@@ -14,7 +16,7 @@ export class ChatRoomsComponent implements OnInit, OnDestroy {
   rooms: Room[] = [];
   onFetchAllRoomsSub: Subscription | undefined;
 
-  constructor(private socketService: SocketService) { }
+  constructor(private socketService: SocketService, private router: Router) { }
 
   ngOnInit(): void {
     // send fetchAllRooms socketIO request
@@ -28,7 +30,18 @@ export class ChatRoomsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.onFetchAllRoomsSub!.unsubscribe();
+    if (this.onFetchAllRoomsSub) {
+      this.onFetchAllRoomsSub.unsubscribe();
+    }
   }
 
+  joinRoom(roomName: string) {
+    // temporary user obj
+    const currentUser: User = {
+      name: 'CurrentUser',
+      email: 'CurrentUser@mail.com'
+    }
+    // call joinRoom from socketService
+    this.socketService.joinRoom(currentUser, roomName);
+  }
 }

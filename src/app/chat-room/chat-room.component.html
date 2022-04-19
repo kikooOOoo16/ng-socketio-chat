@@ -33,11 +33,11 @@
               </div>
             </div>
           </div>
-          <div class="chat-history">
+          <div #chatHistory class="chat-history">
             <ul *ngIf="messages.length > 0; else noMessages" class="m-b-0">
               <li *ngFor="let message of messages" class="clearfix">
                 <div class="message-data">
-                  <span class="message-data-time">{{message.createdAtUnixTime}}</span>
+                  <span class="message-data-time">{{message.author}} : {{ message.createdAtUnixTime |  date:'dd/MM/yyyy HH:mm'}}</span>
                 </div>
                 <div class="message my-message">{{message.text}}</div>
               </li>
@@ -58,7 +58,7 @@
                 </span>
               </div>
               <input #chatInput (keyup.enter)="sendMessage()" type="text" class="form-control"
-                     placeholder="Enter text here...">
+                     placeholder="Enter text here..." autocomplete="false">
             </div>
           </div>
         </div>

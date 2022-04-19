@@ -6,15 +6,18 @@
   border-radius: 0;
   position: relative;
   width: 100%;
+  display: flex;
   box-shadow: 0 1px 2px 0 rgba(0 0 0 0.2);
 }
 .chat-app .people-list {
   width: 280px;
+  height: 60vh;
   position: absolute;
   left: 0;
   top: 0;
   padding: 20px;
-  z-index: 7
+  z-index: 7;
+  overflow-y: scroll;
 }
 
 .chat-app .chat {
@@ -87,7 +90,9 @@
 
 .chat .chat-history {
   padding: 20px;
-  border-bottom: 2px solid #fff
+  border-bottom: 2px solid #fff;
+  overflow-y: scroll;
+  height: 44vh;
 }
 
 .chat .chat-history ul {

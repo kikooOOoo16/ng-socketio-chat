@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {Room} from "../interfaces/room";
 import {SocketService} from "../socket.service";
+import {User} from "../interfaces/user";
 
 @Component({
   selector: 'app-new-chat-room',
@@ -31,14 +32,22 @@ export class NewChatRoomComponent implements OnInit {
     const roomName = this.newRoomForm.get('roomName')!.value;
     const roomDescription = this.newRoomForm.get('roomDescription')!.value;
 
+    // temporary current user obj
+    const currentUser: User = {
+      name: 'CurrentUser',
+      email: 'CurrentUser@mail.com'
+    }
+
     //  create new room instance from field values
-    const newRoom: Room = {author: 'CurrentUserName', name: roomName, description: roomDescription};
+    const newRoom: Room = {
+      name: roomName,
+      description: roomDescription
+    };
 
     // call createRoom method which sends createRoom socketIO req while passing in the newRoom obj.
-    this.socketService.createRoom(newRoom);
+    this.socketService.createRoom(currentUser, newRoom);
 
     // Reset form
     this.newRoomForm.reset();
   }
-
 }
