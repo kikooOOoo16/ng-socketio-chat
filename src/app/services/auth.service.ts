@@ -39,23 +39,25 @@ export class AuthService {
   }
 
   logout = () => {
-    // set userSubject next to null
-    this.userSubject.next(null);
-    // navigate to auth component
-    this.router.navigate(['/auth']);
-    // remove local user state
-    localStorage.removeItem('userData');
-    // reset tokenExpirationTimer
-    if (this.tokenExpirationTimer) {
-      clearTimeout(this.tokenExpirationTimer);
-    }
-    this.tokenExpirationTimer = null;
+    this.http.post(`${environment.serverUrl}/user/logout`, null)
+      .pipe(catchError(this.handleError))
+      .subscribe(() => {
+        // set userSubject next to null
+        this.userSubject.next(null);
+        // remove local user state
+        localStorage.removeItem('userData');
+        // reset tokenExpirationTimer
+        if (this.tokenExpirationTimer) {
+          clearTimeout(this.tokenExpirationTimer);
+        }
+        this.tokenExpirationTimer = null;
+        // navigate to auth component
+        this.router.navigate(['/auth']);
+      });
   }
 
   // return err message
   private handleError = (errorResponse: HttpErrorResponse) => {
-    console.log('Auth error received');
-    console.log(errorResponse);
     //setup generic err message
     let errMessage = 'An unknown error occurred!';
     // check if error response contains specific message and throw it, if not throw generic

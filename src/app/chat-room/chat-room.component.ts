@@ -1,13 +1,12 @@
 import {SocketService} from "../services/socket.service";
 import {ActivatedRoute, ParamMap} from "@angular/router";
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import { Subscription } from 'rxjs';
+import {Subscription} from 'rxjs';
 
 import {faMessage} from '@fortawesome/free-solid-svg-icons';
 
 import {Room} from "../interfaces/room";
 import {SocketMessage} from "../interfaces/socketMessage";
-import {User} from "../interfaces/user";
 
 @Component({
   selector: 'app-chat-room',
@@ -62,32 +61,17 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     // unsubscribe to prevent memory leeks
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
-    // temporary current user
-    const currentUser: User = {
-      _id: '6261051f63ce38f3885eb0ac',
-      name: 'Kristijan',
-      email: 'kristijan@mail.com',
-      createdAt: new Date('2022-04-21T07:17:51.288Z'),
-      updatedAt: new Date('2022-04-21T07:17:51.360Z')
-    }
 
     // trigger user leave room
-    this.socketService.leaveRoom(currentUser, this.room.name);
+    this.socketService.leaveRoom(this.room.name);
   }
 
   sendMessage = () => {
-    // temporary current user
-    const currentUser: User = {
-      _id: '6261051f63ce38f3885eb0ac',
-      name: 'Kristijan',
-      email: 'kristijan@mail.com',
-      createdAt: new Date('2022-04-21T07:17:51.288Z'),
-      updatedAt: new Date('2022-04-21T07:17:51.360Z')
-    }
+
     // check if input has anything
     if (this.chatInput.nativeElement.value !== '') {
       // call sendMessage on socketService to send socketIO sendMessage req
-      this.socketService.sendMessage(currentUser, this.room.name, this.chatInput.nativeElement.value);
+      this.socketService.sendMessage(this.room.name, this.chatInput.nativeElement.value);
       // reset input
       this.chatInput.nativeElement.value = '';
     }
@@ -100,5 +84,4 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
       behavior: 'smooth'
     });
   }
-
 }

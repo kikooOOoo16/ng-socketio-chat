@@ -1,9 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { Subscription } from 'rxjs';
+import {Subscription} from 'rxjs';
 import {Room} from "../interfaces/room";
 import {SocketService} from "../services/socket.service";
 import {Router} from "@angular/router";
-import {User} from "../interfaces/user";
 
 
 @Component({
@@ -36,15 +35,8 @@ export class ChatRoomsComponent implements OnInit, OnDestroy {
   }
 
   joinRoom(roomName: string) {
-    // temporary user obj
-    const currentUser: User = {
-      _id: '6261051f63ce38f3885eb0ac',
-      name: 'Kristijan',
-      email: 'kristijan@mail.com',
-      createdAt: new Date('2022-04-21T07:17:51.288Z'),
-      updatedAt: new Date('2022-04-21T07:17:51.360Z')
-    }
+
     // call joinRoom from socketService
-    this.socketService.joinRoom(currentUser, roomName);
+    this.socketService.joinRoom(roomName);
   }
 }

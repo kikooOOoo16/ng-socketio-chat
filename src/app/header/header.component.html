@@ -17,10 +17,10 @@
           <fa-icon class="nav-icons" [icon]="faSignIn"></fa-icon>
         </a>
       </li>
-      <li *ngIf="isAuthenticated" class="nav-item" [routerLinkActiveOptions]="{exact: true}"
-          routerLinkActive="active">
-        <a class="nav-link" (click)="toggleDropdown()" routerLink="/profile">Profile</a>
-      </li>
+<!--      <li *ngIf="isAuthenticated" class="nav-item" [routerLinkActiveOptions]="{exact: true}"-->
+<!--          routerLinkActive="active">-->
+<!--        <a class="nav-link" (click)="toggleDropdown()" routerLink="/profile">Profile</a>-->
+<!--      </li>-->
       <li *ngIf="isAuthenticated" class="nav-item" [routerLinkActiveOptions]="{exact: true}"
           routerLinkActive="active">
         <a class="nav-link" (click)="onLogout(); toggleDropdown()" routerLink="/auth">Sign Out
