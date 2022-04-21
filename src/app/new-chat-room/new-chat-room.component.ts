@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {Room} from "../interfaces/room";
-import {SocketService} from "../socket.service";
+import {SocketService} from "../services/socket.service";
 import {User} from "../interfaces/user";
 
 @Component({
@@ -34,8 +34,11 @@ export class NewChatRoomComponent implements OnInit {
 
     // temporary current user obj
     const currentUser: User = {
-      name: 'CurrentUser',
-      email: 'CurrentUser@mail.com'
+      _id: '6261051f63ce38f3885eb0ac',
+      name: 'Kristijan',
+      email: 'kristijan@mail.com',
+      createdAt: new Date('2022-04-21T07:17:51.288Z'),
+      updatedAt: new Date('2022-04-21T07:17:51.360Z')
     }
 
     //  create new room instance from field values

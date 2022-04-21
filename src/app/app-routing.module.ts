@@ -4,23 +4,32 @@ import {AuthComponent} from "./auth/auth.component";
 import {ChatRoomsComponent} from "./chat-rooms-list/chat-rooms.component";
 import {NewChatRoomComponent} from "./new-chat-room/new-chat-room.component";
 import {ChatRoomComponent} from "./chat-room/chat-room.component";
+import {AuthGuard} from "./auth/auth.guard";
 
 const routes: Routes = [
+  {
+    path: '',
+    redirectTo: '/chat-rooms-list',
+    pathMatch: 'full'
+  },
   {
     path: 'auth',
     component: AuthComponent
   },
   {
     path: 'chat-rooms-list',
-    component: ChatRoomsComponent
+    component: ChatRoomsComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'new-room',
-    component: NewChatRoomComponent
+    component: NewChatRoomComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'room/:room-name',
-    component: ChatRoomComponent
+    component: ChatRoomComponent,
+    canActivate: [AuthGuard]
   }
 ];
 

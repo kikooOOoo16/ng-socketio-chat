@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {Socket} from "ngx-socket-io";
-import {Room} from "./interfaces/room";
+import {Room} from "../interfaces/room";
 import {Router} from "@angular/router";
-import {User} from "./interfaces/user";
+import {User} from "../interfaces/user";
 
 @Injectable({
   providedIn: 'root'

@@ -1,4 +1,4 @@
-import {SocketService} from "../socket.service";
+import {SocketService} from "../services/socket.service";
 import {ActivatedRoute, ParamMap} from "@angular/router";
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { Subscription } from 'rxjs';
@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import {faMessage} from '@fortawesome/free-solid-svg-icons';
 
 import {Room} from "../interfaces/room";
-import {Message} from "../interfaces/message";
+import {SocketMessage} from "../interfaces/socketMessage";
 import {User} from "../interfaces/user";
 
 @Component({
@@ -28,7 +28,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     description: '',
   };
   // chat room messages
-  messages: Message[] = [];
+  messages: SocketMessage[] = [];
 
   constructor(
     private socketService: SocketService,
@@ -64,8 +64,11 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
     // temporary current user
     const currentUser: User = {
-      name: 'CurrentUser',
-      email: 'CurrentUser@mail.com'
+      _id: '6261051f63ce38f3885eb0ac',
+      name: 'Kristijan',
+      email: 'kristijan@mail.com',
+      createdAt: new Date('2022-04-21T07:17:51.288Z'),
+      updatedAt: new Date('2022-04-21T07:17:51.360Z')
     }
 
     // trigger user leave room
@@ -75,8 +78,11 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   sendMessage = () => {
     // temporary current user
     const currentUser: User = {
-      name: 'CurrentUser',
-      email: 'CurrentUser@mail.com'
+      _id: '6261051f63ce38f3885eb0ac',
+      name: 'Kristijan',
+      email: 'kristijan@mail.com',
+      createdAt: new Date('2022-04-21T07:17:51.288Z'),
+      updatedAt: new Date('2022-04-21T07:17:51.360Z')
     }
     // check if input has anything
     if (this.chatInput.nativeElement.value !== '') {

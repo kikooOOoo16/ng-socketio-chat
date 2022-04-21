@@ -1,5 +1,7 @@
 import {Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {faMessage, faSignInAlt, faSignOutAlt} from '@fortawesome/free-solid-svg-icons';
+import {AuthService} from "../services/auth.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-header',
@@ -13,6 +15,7 @@ export class HeaderComponent implements OnInit {
   faSignOut = faSignOutAlt;
   isDropdownActive = '';
   isAuthenticated = false;
+  private userSub: Subscription | undefined;
 
   // NavBar functionality
   @ViewChild('navbarDropdownMenuLink', { static: true }) navbarDropdownMenuLink!: ElementRef;
@@ -30,9 +33,13 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  constructor(private renderer: Renderer2) { }
+  constructor(private authService: AuthService, private renderer: Renderer2) { }
 
   ngOnInit(): void {
+    // get is authenticated state
+    this.userSub = this.authService.userSubject.subscribe(userData => {
+      this.isAuthenticated = !!userData;
+    })
   }
 
   toggleDropdown(): void {
@@ -48,7 +55,6 @@ export class HeaderComponent implements OnInit {
   }
 
   onLogout(): void {
-    console.log('Logout functionality.');
+    this.authService.logout();
   }
-
 }
