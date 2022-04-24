@@ -6,6 +6,7 @@ import {AuthResponse} from "../interfaces/auth-response";
 import {Router} from "@angular/router";
 import {AlertComponent} from "../shared/alert/alert.component";
 import {PlaceholderDirective} from "../shared/placeholder/placeholder.directive";
+import {Socket} from "ngx-socket-io";
 
 @Component({
   selector: 'app-auth',
@@ -23,7 +24,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   @ViewChild(PlaceholderDirective) alertHost!: PlaceholderDirective;
   private closeSub!: Subscription;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router, private socket: Socket) {
   }
 
   ngOnInit(): void {
@@ -82,6 +83,8 @@ export class AuthComponent implements OnInit, OnDestroy {
     // subscribe to http request to send it through
     authObs.subscribe(resData => {
       this.isLoading = false;
+      // establish socketIO connection
+      this.socket.connect();
       this.router.navigate(['/chat-rooms-list']);
     }, errorMessage => {
       this.error = errorMessage;

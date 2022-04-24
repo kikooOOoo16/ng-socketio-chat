@@ -6,6 +6,7 @@ import {Router} from "@angular/router";
 import {AuthResponse} from "../interfaces/auth-response";
 import {environment} from "../../environments/environment";
 import {catchError, tap} from "rxjs/operators";
+import {Socket} from "ngx-socket-io";
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class AuthService {
   userSubject = new BehaviorSubject<User | null>(null);
   tokenExpirationTimer: any;
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, private socket: Socket) {
   }
 
   // send signUp request to server
@@ -51,6 +52,8 @@ export class AuthService {
           clearTimeout(this.tokenExpirationTimer);
         }
         this.tokenExpirationTimer = null;
+        //disconnect socketIO connection
+        this.socket.disconnect();
         // navigate to auth component
         this.router.navigate(['/auth']);
       });
@@ -61,7 +64,7 @@ export class AuthService {
     //setup generic err message
     let errMessage = 'An unknown error occurred!';
     // check if error response contains specific message and throw it, if not throw generic
-    if (!errorResponse.message) {
+    if (!errorResponse.error.message) {
       return throwError(errMessage);
     }
     if (errorResponse.error.message.split(' ')[0] === 'Error:') {

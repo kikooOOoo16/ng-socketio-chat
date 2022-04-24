@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {Socket} from "ngx-socket-io";
 import {Room} from "../interfaces/room";
 import {Router} from "@angular/router";
-import {AuthService} from "./auth.service";
 import {Subscription} from "rxjs";
 import {User} from "../interfaces/user";
 
@@ -12,7 +11,7 @@ import {User} from "../interfaces/user";
 export class SocketService {
   private userSub!: Subscription;
 
-  constructor(private socket: Socket, private router: Router, private authService: AuthService) {
+  constructor(private socket: Socket, private router: Router) {
   }
 
   // Send createRoom SocketIO request
