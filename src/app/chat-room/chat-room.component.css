@@ -1,3 +1,13 @@
+h6 {
+  margin: 0.4em 0;
+  letter-spacing: 2px;
+  font-weight: 500;
+  font-size: 1.5rem;
+  color: #974309;
+  text-align: center;
+  overflow: hidden;
+}
+
 .card {
   background: #fff;
   transition: .5s;

@@ -20,13 +20,14 @@
 </nav>
 <div class="row my-4 text-center">
   <h3>Chat Rooms</h3>
+  <hr>
 </div>
 <div *ngIf="rooms.length > 0; else noRooms" class="row">
   <div *ngFor="let room of rooms" class="col-xs-12 col-sm-6 col-lg-4 col-xl-3 px-5">
-    <div class="card mb-4">
+    <div class="card shadow mb-4">
       <div class="card-body text-center">
         <h5 class="card-title">{{room.name}}</h5>
-        <p class="card-text">{{room.description}}</p>
+        <p class="card-text">{{(room.description.length > 95? (room.description | slice:0:95)+'...' : (room.description))}}</p>
         <a (click)="joinRoom(room.name)"   class="btn room-btn">Enter</a>
       </div>
     </div>

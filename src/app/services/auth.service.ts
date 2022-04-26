@@ -43,20 +43,45 @@ export class AuthService {
     this.http.post(`${environment.serverUrl}/user/logout`, null)
       .pipe(catchError(this.handleError))
       .subscribe(() => {
-        // set userSubject next to null
-        this.userSubject.next(null);
-        // remove local user state
-        localStorage.removeItem('userData');
-        // reset tokenExpirationTimer
-        if (this.tokenExpirationTimer) {
-          clearTimeout(this.tokenExpirationTimer);
-        }
-        this.tokenExpirationTimer = null;
-        //disconnect socketIO connection
-        this.socket.disconnect();
-        // navigate to auth component
-        this.router.navigate(['/auth']);
+        this.handleUserStateOnLogout();
       });
+  }
+
+  handleUserStateOnLogout = () => {
+    // set userSubject next to null
+    this.userSubject.next(null);
+    // remove local user state
+    localStorage.removeItem('userData');
+    // reset tokenExpirationTimer
+    if (this.tokenExpirationTimer) {
+      clearTimeout(this.tokenExpirationTimer);
+    }
+    this.tokenExpirationTimer = null;
+    //disconnect socketIO connection
+    this.socket.disconnect();
+    // navigate to auth component
+    this.router.navigate(['/auth']);
+  }
+
+  // autoLogin user on page reload (if user was logged in in the first place)
+  autoSignIn = () => {
+    const userData: User = JSON.parse(localStorage.getItem('userData')!);
+    if (!userData) {
+      return;
+    }
+    if (userData.token) {
+      this.userSubject.next(userData);
+      // calculate new token expiration and set autoSignOut
+      const expirationDuration = new Date(userData.expirationDate!).getTime() - new Date().getTime();
+      this.autoSignOut(expirationDuration);
+    }
+  }
+
+  // setup autoLogOut to token expiration time
+  autoSignOut = (expirationDuration: number) => {
+    this.tokenExpirationTimer = setTimeout(() => {
+      this.logout();
+    }, expirationDuration);
   }
 
   // return err message
@@ -85,26 +110,5 @@ export class AuthService {
     this.autoSignOut(expiresIn * 1000);
     // save user state to localstorage
     localStorage.setItem('userData', JSON.stringify(user));
-  }
-
-  // autoLogin user on page reload (if user was logged in in the first place)
-  autoSignIn = () => {
-    const userData: User = JSON.parse(localStorage.getItem('userData')!);
-    if (!userData) {
-      return;
-    }
-    if (userData.token) {
-      this.userSubject.next(userData);
-      // calculate new token expiration and set autoSignOut
-      const expirationDuration = new Date(userData.expirationDate!).getTime() - new Date().getTime();
-      this.autoSignOut(expirationDuration);
-    }
-  }
-
-  // setup autoLogOut to token expiration time
-  autoSignOut = (expirationDuration: number) => {
-    this.tokenExpirationTimer = setTimeout(() => {
-      this.logout();
-    }, expirationDuration);
   }
 }

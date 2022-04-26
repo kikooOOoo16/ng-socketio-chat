@@ -54,8 +54,13 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
       setTimeout(() => this.scrollToBottom(), 2);
     });
 
+    // listen for socketIO roomUsersUpdate request
+    const onRoomUsersUpdateSub = this.socketService.onRoomUsersUpdate().subscribe((roomData: any) => {
+      this.room = roomData;
+    })
+
     // keep sub references in order to unsubscribe later
-    this.subscriptions.push(onFetchRoomSub, onMessageSub);
+    this.subscriptions.push(onFetchRoomSub, onMessageSub, onRoomUsersUpdateSub);
   }
 
   ngOnDestroy(): void {

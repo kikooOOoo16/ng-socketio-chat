@@ -4,6 +4,7 @@ import {Room} from "../interfaces/room";
 import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {User} from "../interfaces/user";
+import {AuthService} from "./auth.service";
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ import {User} from "../interfaces/user";
 export class SocketService {
   private userSub!: Subscription;
 
-  constructor(private socket: Socket, private router: Router) {
+  constructor(private socket: Socket, private router: Router, private authService: AuthService) {
   }
 
   // Send createRoom SocketIO request
@@ -26,6 +27,7 @@ export class SocketService {
     }
     this.socket.emit('createRoom', {token: userToken, newRoom}, (callback: any) => {
       if (callback.split(' ')[0] === 'Error:') {
+        this.checkIfUserTokenExpired(callback);
         return alert(callback);
       }
       // if no error navigate to room component callback is the returned created room name
@@ -45,6 +47,7 @@ export class SocketService {
     }
     this.socket.emit('fetchRoom', {token: userToken, roomName}, (callback: any) => {
       if (callback.split(' ')[0] === 'Error:') {
+        this.checkIfUserTokenExpired(callback);
         this.router.navigate(['/chat-rooms-list']);
         return alert(callback);
       }
@@ -69,6 +72,7 @@ export class SocketService {
 
     this.socket.emit('fetchAllRooms', {token: userToken}, (callback: any) => {
       if (callback.split(' ')[0] === 'Error:') {
+        this.checkIfUserTokenExpired(callback);
         return alert(callback);
       }
     });
@@ -90,6 +94,7 @@ export class SocketService {
     this.socket.emit('joinRoom', {token: userToken, roomName}, (callback: any) => {
 
       if (callback.split(' ')[0] === 'Error:') {
+        this.checkIfUserTokenExpired(callback);
         return alert(callback);
       }
       // if no error response navigate to the joined room (callback is roomName if no error)
@@ -105,12 +110,18 @@ export class SocketService {
     this.unsubUserSub();
 
     this.socket.emit('leaveRoom', {token: userToken, roomName}, (callback: any) => {
-      if (callback.split(' ')[0] === 'Error:') {
+      if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
+        this.checkIfUserTokenExpired(callback);
         return alert(callback);
       }
       // if no callback error navigate to chat-rooms-list
       this.router.navigate(['chat-rooms-list']);
     });
+  }
+
+  // Handle onRoomUsersUpdate SocketIO call from server
+  onRoomUsersUpdate = () => {
+    return this.socket.fromEvent('roomUsersUpdate')
   }
 
   // Send message socketIO request to server
@@ -121,6 +132,11 @@ export class SocketService {
     this.unsubUserSub();
 
     this.socket.emit('sendMessage', ({token: userToken, roomName, message}), (callback: any) => {
+      // check if server returned an error
+      if (callback.split(' ')[0] === 'Error:') {
+        this.checkIfUserTokenExpired(callback);
+        return alert(callback);
+      }
     });
   }
 
@@ -143,6 +159,14 @@ export class SocketService {
   unsubUserSub = () => {
     if (this.userSub) {
       this.userSub.unsubscribe();
+    }
+  }
+
+  checkIfUserTokenExpired = (callback: any) => {
+    if (callback === 'Error: User token has expired.') {
+      // if token expired logout user.
+      this.authService.handleUserStateOnLogout();
+      return alert(callback);
     }
   }
 }
