@@ -12,26 +12,35 @@ import {Router} from "@angular/router";
 })
 export class ChatRoomsComponent implements OnInit, OnDestroy {
 
+  subscriptions: Subscription[] = [];
   rooms: Room[] = [];
-  onFetchAllRoomsSub: Subscription | undefined;
 
-  constructor(private socketService: SocketService, private router: Router) { }
+  constructor(private socketService: SocketService, private router: Router) {
+  }
 
   ngOnInit(): void {
     // send fetchAllRooms socketIO request
     this.socketService.fetchAllRooms();
 
     // listen for onFetchAllRooms socketIO response
-    this.onFetchAllRoomsSub = this.socketService.onFetchAllRooms()
-      .subscribe((allRooms : any) => {
+    const onFetchAllRoomsSub = this.socketService.onFetchAllRooms()
+      .subscribe((allRooms: any) => {
         this.rooms = allRooms;
       });
+
+    // listen for onRoomsListUpdate socketIO emit
+    const onRoomsListUpdate = this.socketService.onRoomsListUpdate()
+      .subscribe((allRooms: any) => {
+        this.rooms = allRooms;
+      });
+
+    // keep sub references in order to unsubscribe later
+    this.subscriptions.push(onFetchAllRoomsSub, onRoomsListUpdate);
   }
 
   ngOnDestroy(): void {
-    if (this.onFetchAllRoomsSub) {
-      this.onFetchAllRoomsSub.unsubscribe();
-    }
+    // unsubscribe to prevent memory leeks
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   joinRoom(roomName: string) {

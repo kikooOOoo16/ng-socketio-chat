@@ -83,6 +83,10 @@ export class SocketService {
     return this.socket.fromEvent('fetchAllRooms');
   }
 
+  onRoomsListUpdate = () => {
+    return this.socket.fromEvent('roomsListUpdate');
+  }
+
   // Send socketIO joinRoom request to the server
   joinRoom = (roomName: string) => {
     // get userId
