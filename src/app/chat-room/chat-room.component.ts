@@ -45,13 +45,16 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     // listen for socketIO fetchRoom response
     const onFetchRoomSub = this.socketService.onFetchRoom().subscribe((roomData: any) => {
       this.room = roomData;
+      this.messages = roomData.chatHistory;
+      console.log('Get Chat History triggered.')
+      console.log(this.messages);
     });
 
     // listen for socketIO message response
     const onMessageSub = this.socketService.onReceiveMessage().subscribe((message: any) => {
       this.messages.push(message);
       // move chat-history to bottom, delay by 1ms
-      setTimeout(() => this.scrollToBottom(), 2);
+      setTimeout(() => this.scrollToBottom(), 1);
     });
 
     // listen for socketIO roomUsersUpdate request

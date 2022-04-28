@@ -139,6 +139,7 @@ export class SocketService {
       // check if server returned an error
       if (callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
+        this.checkIfUserNotInRoom(callback);
         return alert(callback);
       }
     });
@@ -171,6 +172,12 @@ export class SocketService {
       // if token expired logout user.
       this.authService.handleUserStateOnLogout();
       return alert(callback);
+    }
+  }
+
+  checkIfUserNotInRoom = (callback: any) => {
+    if (callback === 'Error: The requested user is not in the current room.') {
+      this.router.navigate([`/chat-rooms-list`]);
     }
   }
 }

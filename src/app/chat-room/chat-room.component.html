@@ -37,7 +37,7 @@
             <ul *ngIf="messages.length > 0; else noMessages" class="m-b-0">
               <li *ngFor="let message of messages" class="clearfix">
                 <div class="message-data">
-                  <span class="message-data-time">{{message.author}} : {{ message.createdAtUnixTime |  date:'dd/MM/yyyy HH:mm'}}</span>
+                  <span class="message-data-time">{{message.author.name}} : {{ message.createdAtUnixTime |  date:'dd/MM/yyyy HH:mm'}}</span>
                 </div>
                 <div class="message my-message">{{message.text}}</div>
               </li>

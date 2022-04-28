@@ -1,5 +1,10 @@
 export interface SocketMessage {
-  author: string;
+  author: {
+    id: string,
+    name: string
+  };
+  _id: string;
   text: string;
   createdAtUnixTime: number;
+  edited?: boolean;
 }
