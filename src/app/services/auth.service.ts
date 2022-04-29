@@ -39,6 +39,7 @@ export class AuthService {
       );
   }
 
+  // send logout request to server
   logout = () => {
     this.http.post(`${environment.serverUrl}/user/logout`, null)
       .pipe(catchError(this.handleError))
@@ -73,14 +74,22 @@ export class AuthService {
       this.userSubject.next(userData);
       // calculate new token expiration and set autoSignOut
       const expirationDuration = new Date(userData.expirationDate!).getTime() - new Date().getTime();
-      this.autoSignOut(expirationDuration);
+      console.log('AutoLogout set to ');
+
+      // if token has already passed logout user
+      if (expirationDuration < 0) {
+        this.handleUserStateOnLogout();
+        this.logout();
+      }
+      this.autoLogOut(expirationDuration);
     }
   }
 
   // setup autoLogOut to token expiration time
-  autoSignOut = (expirationDuration: number) => {
+  autoLogOut = (expirationDuration: number) => {
     this.tokenExpirationTimer = setTimeout(() => {
       this.logout();
+      console.log('AutoLogOut() called');
     }, expirationDuration);
   }
 
@@ -107,7 +116,7 @@ export class AuthService {
     // set behaviourSubject to returned user
     this.userSubject.next(user);
     // set autoLogout timer equal to token expiration duration
-    this.autoSignOut(expiresIn * 1000);
+    this.autoLogOut(expiresIn * 1000);
     // save user state to localstorage
     localStorage.setItem('userData', JSON.stringify(user));
   }

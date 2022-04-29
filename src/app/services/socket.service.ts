@@ -2,15 +2,14 @@ import {Injectable} from '@angular/core';
 import {Socket} from "ngx-socket-io";
 import {Room} from "../interfaces/room";
 import {Router} from "@angular/router";
-import {Subscription} from "rxjs";
 import {User} from "../interfaces/user";
 import {AuthService} from "./auth.service";
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocketService {
-  private userSub!: Subscription;
 
   constructor(private socket: Socket, private router: Router, private authService: AuthService) {
   }
@@ -19,8 +18,7 @@ export class SocketService {
   createRoom = (newRoom: Room) => {
     // get userId
     const userToken = this.getUserToken();
-    // unsubscribe from the userSubject
-    this.unsubUserSub();
+
     // check if userId exists
     if (!userToken) {
       return alert(`There was a problem reading the current user's id.`);
@@ -39,8 +37,7 @@ export class SocketService {
   fetchRoom = (roomName: string) => {
     // get userId
     const userToken = this.getUserToken();
-    // unsubscribe from the userSubject
-    this.unsubUserSub();
+
     // check if userId exists
     if (!userToken) {
       return alert(`There was a problem reading the current user's id.`);
@@ -63,8 +60,7 @@ export class SocketService {
   fetchAllRooms = () => {
     // get userId
     const userToken = this.getUserToken();
-    // unsubscribe from the userSubject
-    this.unsubUserSub();
+
     // check if userId exists
     if (!userToken) {
       return alert(`There was a problem reading the current user's id.`);
@@ -83,6 +79,27 @@ export class SocketService {
     return this.socket.fromEvent('fetchAllRooms');
   }
 
+  fetchUserRooms = () => {
+    // get userId
+    const userToken = this.getUserToken();
+    // check if userToken retrieved successfully
+    if (!userToken) {
+      return alert(`There was a problem reading the current user's id.`);
+    }
+
+    this.socket.emit('fetchUserRooms', {token: userToken}, (callback: any) => {
+      if (callback.split(' ')[0] === 'Error:') {
+        this.checkIfUserTokenExpired(callback);
+        return alert(callback);
+      }
+    });
+  }
+
+  // Handle fetchAllUserRooms socketIO call from server
+  onFetchAllUserRooms = (): Observable<Room[]> => {
+    return this.socket.fromEvent('fetchUserRooms');
+  }
+
   onRoomsListUpdate = () => {
     return this.socket.fromEvent('roomsListUpdate');
   }
@@ -91,8 +108,6 @@ export class SocketService {
   joinRoom = (roomName: string) => {
     // get userId
     const userToken = this.getUserToken();
-    // unsubscribe from the userSubject
-    this.unsubUserSub();
 
     // emit the request using the socket instance
     this.socket.emit('joinRoom', {token: userToken, roomName}, (callback: any) => {
@@ -110,8 +125,6 @@ export class SocketService {
   leaveRoom = (roomName: string) => {
     // get userId
     const userToken = this.getUserToken();
-    // unsubscribe from the userSubject
-    this.unsubUserSub();
 
     this.socket.emit('leaveRoom', {token: userToken, roomName}, (callback: any) => {
       if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
@@ -128,12 +141,47 @@ export class SocketService {
     return this.socket.fromEvent('roomUsersUpdate')
   }
 
+  // send editRoom socketIO request to server
+  editRoom = async (editedRoom: Room) => {
+    let err = '';
+    const userToken = this.getUserToken();
+
+    await this.socket.emit('editRoom', {token: userToken, room: editedRoom}, (callback: any) => {
+      console.log('EditRoom: callback = ');
+      console.log(callback);
+      if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
+        this.checkIfUserTokenExpired(callback);
+        err = callback;
+        alert(callback);
+      }
+    });
+    return {err};
+  }
+
+  // send deleteRoom socketIO request to server
+  deleteRoom = (roomId: string) => {
+    let err = '';
+
+    // get user token
+    const userToken = this.getUserToken();
+
+    // send socketIO request
+    this.socket.emit('deleteRoom', {token: userToken, roomId}, (callback: any) => {
+      if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
+        this.checkIfUserTokenExpired(callback);
+        err = callback;
+        alert(callback);
+      }
+    });
+    alert('Successfully deleted room.');
+
+    return {err};
+  }
+
   // Send message socketIO request to server
   sendMessage = (roomName: string, message: string) => {
     // get userId
     const userToken = this.getUserToken();
-    // unsubscribe from the userSubject
-    this.unsubUserSub();
 
     this.socket.emit('sendMessage', ({token: userToken, roomName, message}), (callback: any) => {
       // check if server returned an error
@@ -157,13 +205,6 @@ export class SocketService {
       return userData.token;
     } else {
       return undefined;
-    }
-  }
-
-// unsub from Subscription used when getting the user token
-  unsubUserSub = () => {
-    if (this.userSub) {
-      this.userSub.unsubscribe();
     }
   }
 

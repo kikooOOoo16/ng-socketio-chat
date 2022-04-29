@@ -39,7 +39,7 @@ export class HeaderComponent implements OnInit {
     // get is authenticated state
     this.userSub = this.authService.userSubject.subscribe(userData => {
       this.isAuthenticated = !!userData;
-    })
+    });
   }
 
   toggleDropdown(): void {

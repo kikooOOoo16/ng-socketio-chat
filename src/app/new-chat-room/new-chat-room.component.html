@@ -1,3 +1,8 @@
+<app-chat-room-options></app-chat-room-options>
+<div class="row my-4 text-center">
+  <h3>New Room</h3>
+  <hr>
+</div>
 <div class="row mt-5 justify-content-center">
   <div class="col-10">
     <form [formGroup]="newRoomForm" (ngSubmit)="newRoomFormSubmit()">
@@ -26,8 +31,8 @@
     </form>
   </div>
 </div>
-<div class="row mt-3 justify-content-center">
+<div class="row my-5 justify-content-center">
   <div class="col-10 text-center">
-    <button class="btn w-25 rounded-0 font-weight-bold mt-2" routerLink="/chat-rooms-list">Go Back</button>
+    <button class="btn w-25 rounded-0 font-weight-bold" routerLink="/chat-rooms-list">Go Back</button>
   </div>
 </div>

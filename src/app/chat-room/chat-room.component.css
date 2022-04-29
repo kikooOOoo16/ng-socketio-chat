@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
 h6 {
   margin: 0.4em 0;
   letter-spacing: 2px;
@@ -19,10 +21,14 @@ h6 {
   display: flex;
   box-shadow: 0 1px 2px 0 rgba(0 0 0 0.2);
 }
+
+div.chat-side {
+  padding: 0;
+}
 .chat-app .people-list {
-  width: 280px;
+  /*width: 280px;*/
   height: 60vh;
-  position: absolute;
+  /*position: absolute;*/
   left: 0;
   top: 0;
   padding: 20px;
@@ -32,7 +38,7 @@ h6 {
 
 .chat-app .chat {
   height: 60vh;
-  margin-left: 280px;
+  /*margin-left: 280px;*/
   border-left: 1px solid #eaeaea
 }
 
@@ -50,7 +56,7 @@ h6 {
 }
 
 .people-list .chat-list li:hover {
-  background: #efefef;
+  background: #fff0d9;
   cursor: pointer
 }
 
@@ -95,14 +101,14 @@ h6 {
 
 .chat .chat-header .chat-about {
   float: left;
-  padding-left: 10px
+  padding-left: 10px;
 }
 
 .chat .chat-history {
   padding: 20px;
   border-bottom: 2px solid #fff;
   overflow-y: scroll;
-  height: 44vh;
+  height: 42vh;
 }
 
 .chat .chat-history ul {
@@ -137,6 +143,7 @@ h6 {
   padding: 18px 20px;
   line-height: 26px;
   font-size: 16px;
+  font-family: 'Nunito', sans-serif;
   border-radius: 7px;
   display: inline-block;
   position: relative
@@ -145,43 +152,41 @@ h6 {
 .chat .chat-history .message:after {
   bottom: 100%;
   left: 7%;
-  border: solid transparent;
   content: " ";
   height: 0;
   width: 0;
   position: absolute;
   pointer-events: none;
+  border: 10px solid transparent;
   border-bottom-color: #fff;
-  border-width: 10px;
   margin-left: -10px
 }
 
 .chat .chat-history .my-message {
-  background: #efefef
+  background: #fff0d9
 }
 
 .chat .chat-history .my-message:after {
   bottom: 100%;
   left: 30px;
-  border: solid transparent;
   content: " ";
   height: 0;
   width: 0;
   position: absolute;
   pointer-events: none;
-  border-bottom-color: #efefef;
-  border-width: 10px;
+  border: 10px solid transparent;
+  border-bottom-color: #fff0d9;
   margin-left: -10px
 }
 
 .chat .chat-history .other-message {
-  background: #e8f1f3;
+  background: #ffd1b1;
   text-align: right
 }
 
 .chat .chat-history .other-message:after {
-  border-bottom-color: #e8f1f3;
-  left: 93%
+  border-bottom-color: #ffd1b1;
+  left: 30px;
 }
 
 .chat .chat-message {
@@ -189,9 +194,9 @@ h6 {
 }
 
 .chat-message {
-  position: absolute;
+  /*position: absolute;*/
   bottom: 0;
-  width: 70%;
+  width: 100%;
 }
 
 .input-group-text {
@@ -224,6 +229,10 @@ h6 {
   float: right
 }
 
+li.user-message.clearfix {
+  text-align: right;
+}
+
 .clearfix:after {
   visibility: hidden;
   display: block;
@@ -252,7 +261,7 @@ h6 {
     border-radius: 0.55rem 0.55rem 0 0
   }
   .chat-app .chat-history {
-    height: 300px;
+    height: 42vh;
     overflow-x: auto
   }
 }
@@ -263,7 +272,7 @@ h6 {
     overflow-x: auto
   }
   .chat-app .chat-history {
-    height: 600px;
+    height: 42vh;
     overflow-x: auto
   }
 }
@@ -274,7 +283,8 @@ h6 {
     overflow-x: auto
   }
   .chat-app .chat-history {
-    height: calc(100vh - 350px);
+    /*height: calc(100vh - 350px);*/
+    height: 42vh;
     overflow-x: auto
   }
 }

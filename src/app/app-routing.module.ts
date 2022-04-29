@@ -5,6 +5,7 @@ import {ChatRoomsComponent} from "./chat-rooms-list/chat-rooms.component";
 import {NewChatRoomComponent} from "./new-chat-room/new-chat-room.component";
 import {ChatRoomComponent} from "./chat-room/chat-room.component";
 import {AuthGuard} from "./auth/auth.guard";
+import {MyRoomsComponent} from "./my-rooms-list/my-rooms.component";
 
 const routes: Routes = [
   {
@@ -19,6 +20,11 @@ const routes: Routes = [
   {
     path: 'chat-rooms-list',
     component: ChatRoomsComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'my-rooms-list',
+    component: MyRoomsComponent,
     canActivate: [AuthGuard]
   },
   {

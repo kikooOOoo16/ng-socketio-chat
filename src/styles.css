@@ -1,6 +1,37 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~bootstrap/dist/css/bootstrap.css";
 
+h3 {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #974309;
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 400;
+  font-size: 2.4rem;
+  margin-bottom: 1rem;
+  margin-top: 15px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+h4 {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #974309;
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 400;
+  font-size: 1.6rem;
+  margin: 35px 0 10px 0;
+  display: inline-block;
+  vertical-align: top;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, #f0f0f0, #974309, #974309, #f0f0f0);
+}
+
 .invalid-input-msg {
   color: red;
 }

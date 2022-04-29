@@ -17,6 +17,9 @@ import {PlaceholderDirective} from './shared/placeholder/placeholder.directive';
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {AuthInterceptor} from "./auth/auth.interceptor";
 import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner.component';
+import { MyRoomsComponent } from './my-rooms-list/my-rooms.component';
+import { ChatRoomOptionsComponent } from './chat-room-options/chat-room-options.component';
+import { EditRoomComponent } from './my-rooms-list/edit-room/edit-room.component';
 
 const config: SocketIoConfig = {
   url: environment.serverUrl,
@@ -36,6 +39,9 @@ const config: SocketIoConfig = {
     AlertComponent,
     PlaceholderDirective,
     LoadingSpinnerComponent,
+    MyRoomsComponent,
+    ChatRoomOptionsComponent,
+    EditRoomComponent,
   ],
   imports: [
     SocketIoModule.forRoot(config),

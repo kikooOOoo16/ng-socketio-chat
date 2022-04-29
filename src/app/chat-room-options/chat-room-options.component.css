@@ -1,0 +1,38 @@
+.navbar {
+  padding: 0;
+  height: 60px;
+}
+
+.nav-item .nav-link:hover {
+  background-color: #BCA265;
+}
+
+.nav-item .nav-link.active {
+  background-color: #BCA265;
+}
+
+.nav-link {
+  padding-top: 18px;
+  height: 60px;
+  cursor: pointer;
+}
+
+li.nav-item a {
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+li.nav-item a.active {
+  color: #974309;
+}
+
+li.nav-item a:hover {
+  color: #974309;
+}
+
+div.container-fluid {
+  background-color: #984911;
+}
