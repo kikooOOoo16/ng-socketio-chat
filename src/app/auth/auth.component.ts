@@ -1,12 +1,11 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthService} from "../services/auth.service";
 import {Observable, Subscription} from "rxjs";
 import {AuthResponse} from "../interfaces/auth-response";
 import {Router} from "@angular/router";
-import {AlertComponent} from "../shared/alert/alert.component";
-import {PlaceholderDirective} from "../shared/placeholder/placeholder.directive";
 import {Socket} from "ngx-socket-io";
+import {AlertService} from "../services/alert.service";
 
 @Component({
   selector: 'app-auth',
@@ -19,12 +18,10 @@ export class AuthComponent implements OnInit, OnDestroy {
   signInForm!: FormGroup;
   isSignInMode = true;
   isLoading = false;
-  private error: string = '';
-  // helper directive to get host view container ref
-  @ViewChild(PlaceholderDirective) alertHost!: PlaceholderDirective;
+
   private closeSub!: Subscription;
 
-  constructor(private authService: AuthService, private router: Router, private socket: Socket) {
+  constructor(private authService: AuthService, private router: Router, private socket: Socket, private alertService: AlertService) {
   }
 
   ngOnInit(): void {
@@ -87,8 +84,8 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.socket.connect();
       this.router.navigate(['/chat-rooms-list']);
     }, errorMessage => {
-      this.error = errorMessage;
-      this.showErrorAlert(errorMessage);
+      this.alertService.onAlertReceived(errorMessage);
+      // this.showErrorAlert(errorMessage);
       this.isLoading = false;
     })
   }
@@ -96,24 +93,5 @@ export class AuthComponent implements OnInit, OnDestroy {
   // store auth state switch value
   onSwitchMode() {
     this.isSignInMode = !this.isSignInMode;
-  }
-
-  // show errorAlert component on err
-  private showErrorAlert(errorMessage: string) {
-
-    //get hostViewContainer ref by using alertHost directive
-    const hostViewContainer = this.alertHost.viewContainerRef;
-    hostViewContainer.clear();
-
-    // create the AlertComponent on the hostViewContainer
-    const componentRef = hostViewContainer.createComponent(AlertComponent);
-
-    // send @Input message to the AlertComponent in order to show error message
-    componentRef.instance.message = errorMessage;
-    // close AlertComponent
-    this.closeSub = componentRef.instance.close.subscribe(() => {
-      hostViewContainer.clear();
-      this.closeSub.unsubscribe();
-    });
   }
 }

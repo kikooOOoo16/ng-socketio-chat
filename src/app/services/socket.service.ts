@@ -5,13 +5,14 @@ import {Router} from "@angular/router";
 import {User} from "../interfaces/user";
 import {AuthService} from "./auth.service";
 import {Observable} from "rxjs";
+import {AlertService} from "./alert.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocketService {
 
-  constructor(private socket: Socket, private router: Router, private authService: AuthService) {
+  constructor(private socket: Socket, private router: Router, private authService: AuthService, private alertService: AlertService) {
   }
 
   // Send createRoom SocketIO request
@@ -21,12 +22,15 @@ export class SocketService {
 
     // check if userId exists
     if (!userToken) {
-      return alert(`There was a problem reading the current user's id.`);
+      this.alertService.onAlertReceived('Error: There was a problem reading the current user\'s id.');
+      return;
+      // return alert(`There was a problem reading the current user's id.`);
     }
     this.socket.emit('createRoom', {token: userToken, newRoom}, (callback: any) => {
       if (callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
-        return alert(callback);
+        this.alertService.onAlertReceived(callback);
+        return;
       }
       // if no error navigate to room component callback is the returned created room name
       this.router.navigate([`/room/${callback}`]);
@@ -40,13 +44,15 @@ export class SocketService {
 
     // check if userId exists
     if (!userToken) {
-      return alert(`There was a problem reading the current user's id.`);
+      this.alertService.onAlertReceived('Error: There was a problem reading the current user\'s id.');
+      return;
     }
     this.socket.emit('fetchRoom', {token: userToken, roomName}, (callback: any) => {
       if (callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
         this.router.navigate(['/chat-rooms-list']);
-        return alert(callback);
+        this.alertService.onAlertReceived(callback);
+        return;
       }
     });
   }
@@ -63,13 +69,15 @@ export class SocketService {
 
     // check if userId exists
     if (!userToken) {
-      return alert(`There was a problem reading the current user's id.`);
+      this.alertService.onAlertReceived('Error: There was a problem reading the current user\'s id.');
+      return;
     }
 
     this.socket.emit('fetchAllRooms', {token: userToken}, (callback: any) => {
       if (callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
-        return alert(callback);
+        this.alertService.onAlertReceived(callback);
+        return;
       }
     });
   }
@@ -84,13 +92,15 @@ export class SocketService {
     const userToken = this.getUserToken();
     // check if userToken retrieved successfully
     if (!userToken) {
-      return alert(`There was a problem reading the current user's id.`);
+      this.alertService.onAlertReceived('There was a problem reading the current user\'s id.');
+      return;
     }
 
     this.socket.emit('fetchUserRooms', {token: userToken}, (callback: any) => {
       if (callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
-        return alert(callback);
+        this.alertService.onAlertReceived(callback);
+        return;
       }
     });
   }
@@ -114,7 +124,8 @@ export class SocketService {
 
       if (callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
-        return alert(callback);
+        this.alertService.onAlertReceived(callback);
+        return;
       }
       // if no error response navigate to the joined room (callback is roomName if no error)
       this.router.navigate([`/room/${callback}`]);
@@ -129,7 +140,8 @@ export class SocketService {
     this.socket.emit('leaveRoom', {token: userToken, roomName}, (callback: any) => {
       if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
-        return alert(callback);
+        this.alertService.onAlertReceived(callback);
+        return;
       }
       // if no callback error navigate to chat-rooms-list
       this.router.navigate(['chat-rooms-list']);
@@ -147,21 +159,21 @@ export class SocketService {
     const userToken = this.getUserToken();
 
     await this.socket.emit('editRoom', {token: userToken, room: editedRoom}, (callback: any) => {
-      console.log('EditRoom: callback = ');
-      console.log(callback);
+
       if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
         err = callback;
-        alert(callback);
+        this.alertService.onAlertReceived(callback);
       }
     });
+    if (err === '') {
+      this.alertService.onAlertReceived('Info: Successfully edited room.');
+    }
     return {err};
   }
 
   // send deleteRoom socketIO request to server
   deleteRoom = (roomId: string) => {
-    let err = '';
-
     // get user token
     const userToken = this.getUserToken();
 
@@ -169,13 +181,12 @@ export class SocketService {
     this.socket.emit('deleteRoom', {token: userToken, roomId}, (callback: any) => {
       if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
-        err = callback;
-        alert(callback);
+        this.alertService.onAlertReceived(callback);
+        return;
       }
     });
-    alert('Successfully deleted room.');
 
-    return {err};
+    this.alertService.onAlertReceived('Info: Successfully deleted room.');
   }
 
   // Send message socketIO request to server
@@ -188,7 +199,8 @@ export class SocketService {
       if (callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
         this.checkIfUserNotInRoom(callback);
-        return alert(callback);
+        this.alertService.onAlertReceived(callback);
+        return;
       }
     });
   }
@@ -212,7 +224,7 @@ export class SocketService {
     if (callback === 'Error: User token has expired.') {
       // if token expired logout user.
       this.authService.handleUserStateOnLogout();
-      return alert(callback);
+      return;
     }
   }
 

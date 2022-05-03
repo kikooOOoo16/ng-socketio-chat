@@ -72,7 +72,6 @@ export class EditRoomComponent implements OnInit {
     // clear form
     if (err === '') {
       this.editRoomForm.reset();
-      alert('Room successfully updated.');
     }
   }
 }

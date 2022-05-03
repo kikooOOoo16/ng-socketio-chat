@@ -25,3 +25,25 @@
 .alert-box-actions {
   text-align: right;
 }
+
+.btn {
+  transition: background-color 0.4s;
+}
+
+.err-alert .btn {
+  background-color: #974309;
+  color: #ffffff;
+}
+
+.err-alert .btn:hover {
+  background-color: #b47449;
+}
+
+.info-alert .btn {
+  background-color: #08799c;
+  color: #ffffff;
+}
+
+.info-alert .btn:hover {
+  background-color: #5fabbf;
+}
