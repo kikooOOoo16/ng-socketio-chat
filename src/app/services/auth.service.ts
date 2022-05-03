@@ -6,7 +6,7 @@ import {Router} from "@angular/router";
 import {AuthResponse} from "../interfaces/auth-response";
 import {environment} from "../../environments/environment";
 import {catchError, tap} from "rxjs/operators";
-import {Socket} from "ngx-socket-io";
+import {CustomSocket} from "./customSocket";
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class AuthService {
   userSubject = new BehaviorSubject<User | null>(null);
   tokenExpirationTimer: any;
 
-  constructor(private http: HttpClient, private router: Router, private socket: Socket) {
+  constructor(private http: HttpClient, private router: Router, private socket: CustomSocket) {
   }
 
   // send signUp request to server
@@ -25,6 +25,8 @@ export class AuthService {
       .pipe(catchError(this.handleError),
         tap((resData: AuthResponse) => {
           this.handleAuthentication(resData.message, resData.user, resData.token, resData.expiresIn);
+          // establish socketIO conn
+          this.establishSocketIOConn();
         })
       );
   }
@@ -35,6 +37,8 @@ export class AuthService {
       .pipe(catchError(this.handleError),
         tap((resData: AuthResponse) => {
           this.handleAuthentication(resData.message, resData.user, resData.token, resData.expiresIn);
+          // establish socketIO conn
+          this.establishSocketIOConn();
         })
       );
   }
@@ -119,5 +123,11 @@ export class AuthService {
     this.autoLogOut(expiresIn * 1000);
     // save user state to localstorage
     localStorage.setItem('userData', JSON.stringify(user));
+    // start socketIO connection
+    this.socket.connect();
+  }
+
+  private establishSocketIOConn = () => {
+
   }
 }

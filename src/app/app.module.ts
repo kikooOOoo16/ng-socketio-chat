@@ -20,13 +20,14 @@ import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinne
 import { MyRoomsComponent } from './my-rooms-list/my-rooms.component';
 import { ChatRoomOptionsComponent } from './chat-room-options/chat-room-options.component';
 import { EditRoomComponent } from './my-rooms-list/edit-room/edit-room.component';
+import {CustomSocket} from "./services/customSocket";
 
-const config: SocketIoConfig = {
-  url: environment.serverUrl,
-  options: {
-    transports: ['websocket']
-  }
-}
+// const config: SocketIoConfig = {
+//   url: 'DummyURL',
+//   options: {
+//     transports: ['websocket']
+//   }
+// }
 
 @NgModule({
   declarations: [
@@ -44,7 +45,7 @@ const config: SocketIoConfig = {
     EditRoomComponent,
   ],
   imports: [
-    SocketIoModule.forRoot(config),
+    SocketIoModule,
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
@@ -52,11 +53,12 @@ const config: SocketIoConfig = {
     FontAwesomeModule
   ],
   providers: [
+    CustomSocket,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }
+    },
   ],
   bootstrap: [AppComponent]
 })

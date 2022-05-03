@@ -1,18 +1,18 @@
 import {Injectable} from '@angular/core';
-import {Socket} from "ngx-socket-io";
 import {Room} from "../interfaces/room";
 import {Router} from "@angular/router";
 import {User} from "../interfaces/user";
 import {AuthService} from "./auth.service";
 import {Observable} from "rxjs";
 import {AlertService} from "./alert.service";
+import {CustomSocket} from "./customSocket";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocketService {
 
-  constructor(private socket: Socket, private router: Router, private authService: AuthService, private alertService: AlertService) {
+  constructor(private socket: CustomSocket, private router: Router, private authService: AuthService, private alertService: AlertService) {
   }
 
   // Send createRoom SocketIO request

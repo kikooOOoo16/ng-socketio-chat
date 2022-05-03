@@ -4,8 +4,8 @@ import {AuthService} from "../services/auth.service";
 import {Observable, Subscription} from "rxjs";
 import {AuthResponse} from "../interfaces/auth-response";
 import {Router} from "@angular/router";
-import {Socket} from "ngx-socket-io";
 import {AlertService} from "../services/alert.service";
+import {CustomSocket} from "../services/customSocket";
 
 @Component({
   selector: 'app-auth',
@@ -21,7 +21,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   private closeSub!: Subscription;
 
-  constructor(private authService: AuthService, private router: Router, private socket: Socket, private alertService: AlertService) {
+  constructor(private authService: AuthService, private router: Router, private socket: CustomSocket, private alertService: AlertService) {
   }
 
   ngOnInit(): void {
@@ -82,6 +82,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.isLoading = false;
       // establish socketIO connection
       this.socket.connect();
+      // navigate to chat-rooms-list upon successful auth
       this.router.navigate(['/chat-rooms-list']);
     }, errorMessage => {
       this.alertService.onAlertReceived(errorMessage);

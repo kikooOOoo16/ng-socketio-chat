@@ -10,7 +10,7 @@ import {AlertService} from "./services/alert.service";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
   title = 'ng-socketio-app';
   // helper directive to get host view container ref
   @ViewChild(PlaceholderDirective) alertHost!: PlaceholderDirective;
@@ -22,7 +22,7 @@ export class AppComponent implements OnInit{
 
   ngOnInit(): void {
     this.authService.autoSignIn();
-    this.alertSub = this.alertService.alertSubject.subscribe((err : string) => {
+    this.alertSub = this.alertService.alertSubject.subscribe((err: string) => {
       this.showErrorAlert(err);
     });
   }
@@ -30,19 +30,21 @@ export class AppComponent implements OnInit{
   // show errorAlert component on err
   private showErrorAlert(errorMessage: string) {
 
-    //get hostViewContainer ref by using alertHost directive
-    const hostViewContainer = this.alertHost.viewContainerRef;
-    hostViewContainer.clear();
-
-    // create the AlertComponent on the hostViewContainer
-    const componentRef = hostViewContainer.createComponent(AlertComponent);
-
-    // send @Input message to the AlertComponent in order to show error message
-    componentRef.instance.message = errorMessage;
-    // close AlertComponent
-    this.closeSub = componentRef.instance.close.subscribe(() => {
+    if (this.alertHost) {
+      //get hostViewContainer ref by using alertHost directive
+      const hostViewContainer = this.alertHost.viewContainerRef;
       hostViewContainer.clear();
-      this.closeSub.unsubscribe();
-    });
+
+      // create the AlertComponent on the hostViewContainer
+      const componentRef = hostViewContainer.createComponent(AlertComponent);
+
+      // send @Input message to the AlertComponent in order to show error message
+      componentRef.instance.message = errorMessage;
+      // close AlertComponent
+      this.closeSub = componentRef.instance.close.subscribe(() => {
+        hostViewContainer.clear();
+        this.closeSub.unsubscribe();
+      });
+    }
   }
 }
