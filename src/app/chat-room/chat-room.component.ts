@@ -28,6 +28,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     description: '',
   };
   // chat room messages
+  // messages = new BehaviorSubject<SocketMessage[]>([]);
   messages: SocketMessage[] = [];
   userId!: string;
   // last message sent timestamp
@@ -54,9 +55,11 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     });
 
     // listen for socketIO fetchRoom response
-    const onFetchRoomSub = this.socketService.onFetchRoom().subscribe((roomData: any) => {
+    const onFetchRoomSub = this.socketService.onFetchRoom().subscribe((roomData: Room) => {
       this.room = roomData;
-      this.messages = roomData.chatHistory;
+      if (roomData.chatHistory) {
+        this.messages = [...this.messages, ...roomData.chatHistory];
+      }
       // scroll to bottom after loading chat history
       setTimeout(() => this.scrollToBottom(), 1);
     });

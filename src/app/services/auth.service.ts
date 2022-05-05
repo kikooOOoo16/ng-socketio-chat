@@ -7,6 +7,7 @@ import {AuthResponse} from "../interfaces/auth-response";
 import {environment} from "../../environments/environment";
 import {catchError, tap} from "rxjs/operators";
 import {CustomSocket} from "./customSocket";
+import {AlertService} from "./alert.service";
 
 @Injectable({
   providedIn: 'root'
@@ -16,43 +17,42 @@ export class AuthService {
   userSubject = new BehaviorSubject<User | null>(null);
   tokenExpirationTimer: any;
 
-  constructor(private http: HttpClient, private router: Router, private socket: CustomSocket) {
+  constructor(private http: HttpClient, private router: Router, private socket: CustomSocket, private alertService: AlertService) {
   }
 
   // send signUp request to server
   signUp = (name: string, email: string, password: string) => {
-    return this.http.post<AuthResponse>(`${environment.serverUrl}/user/signup`, {name, email, password})
+    return this.http.post<AuthResponse>(`${environment.serverUrl}/user/signup`, {name, email, password}, {withCredentials: true})
       .pipe(catchError(this.handleError),
         tap((resData: AuthResponse) => {
-          this.handleAuthentication(resData.message, resData.user, resData.token, resData.expiresIn);
-          // establish socketIO conn
-          this.establishSocketIOConn();
+          this.handleAuthentication(resData.message, resData.user, resData.expiresIn);
         })
       );
   }
 
   // send signIn request to server
+  // withCredentials: true => is enabled because out API and Angular domains are different. It helps attach the cookie to API calls for cross-site requests
   signIn = (email: string, password: string) => {
-    return this.http.post<AuthResponse>(`${environment.serverUrl}/user/signin`, {email, password})
+    return this.http.post<AuthResponse>(`${environment.serverUrl}/user/signin`, {email, password}, {withCredentials: true})
       .pipe(catchError(this.handleError),
         tap((resData: AuthResponse) => {
-          this.handleAuthentication(resData.message, resData.user, resData.token, resData.expiresIn);
-          // establish socketIO conn
-          this.establishSocketIOConn();
+          this.handleAuthentication(resData.message, resData.user, resData.expiresIn);
         })
       );
   }
 
   // send logout request to server
   logout = () => {
-    this.http.post(`${environment.serverUrl}/user/logout`, null)
+    this.http.post(`${environment.serverUrl}/user/logout`, null, {withCredentials: true})
       .pipe(catchError(this.handleError))
       .subscribe(() => {
         this.handleUserStateOnLogout();
       });
   }
 
+  // update local user state on logout
   handleUserStateOnLogout = () => {
+    console.log('AuthService: HandleUserStateOnLogout() Called!');
     // set userSubject next to null
     this.userSubject.next(null);
     // remove local user state
@@ -74,18 +74,20 @@ export class AuthService {
     if (!userData) {
       return;
     }
-    if (userData.token) {
+    if (userData.expirationDate && new Date(userData.expirationDate!).getTime() > 0) {
       this.userSubject.next(userData);
       // calculate new token expiration and set autoSignOut
       const expirationDuration = new Date(userData.expirationDate!).getTime() - new Date().getTime();
-      console.log('AutoLogout set to ');
 
       // if token has already passed logout user
       if (expirationDuration < 0) {
         this.handleUserStateOnLogout();
         this.logout();
       }
+      // set autoLogout timer
       this.autoLogOut(expirationDuration);
+      // restart socketIO connection
+      this.socket.connect();
     }
   }
 
@@ -112,11 +114,9 @@ export class AuthService {
   }
 
   // Handle authentication logic
-  private handleAuthentication = (message: string, user: User, token: string, expiresIn: number) => {
+  private handleAuthentication = (message: string, user: User, expiresIn: number) => {
     // set expiration date for recalculating token expiration timer on user reload page (this is saved to the local state)
     user.expirationDate = new Date(new Date().getTime() + (expiresIn * 1000));
-    // set token value on userObj
-    user.token = token;
     // set behaviourSubject to returned user
     this.userSubject.next(user);
     // set autoLogout timer equal to token expiration duration
@@ -125,9 +125,5 @@ export class AuthService {
     localStorage.setItem('userData', JSON.stringify(user));
     // start socketIO connection
     this.socket.connect();
-  }
-
-  private establishSocketIOConn = () => {
-
   }
 }

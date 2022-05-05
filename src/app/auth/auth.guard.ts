@@ -19,10 +19,11 @@ export class AuthGuard implements CanActivate {
     return this.authService.userSubject.pipe(
       take(1),
       map(userData => {
-        const isAuth = !!userData;
-        if (isAuth) {
+        // check if userData exists and if it does that the token expirationDate hasn't passed, return true
+        if (userData && userData.expirationDate && new Date(userData.expirationDate!).getTime() > 0) {
           return true;
         }
+        // if above check failed reroute user to /auth
         return this.router.createUrlTree(['/auth']);
       })
     )

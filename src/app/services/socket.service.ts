@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Room} from "../interfaces/room";
 import {Router} from "@angular/router";
-import {User} from "../interfaces/user";
 import {AuthService} from "./auth.service";
 import {Observable} from "rxjs";
 import {AlertService} from "./alert.service";
@@ -17,16 +16,7 @@ export class SocketService {
 
   // Send createRoom SocketIO request
   createRoom = (newRoom: Room) => {
-    // get userId
-    const userToken = this.getUserToken();
-
-    // check if userId exists
-    if (!userToken) {
-      this.alertService.onAlertReceived('Error: There was a problem reading the current user\'s id.');
-      return;
-      // return alert(`There was a problem reading the current user's id.`);
-    }
-    this.socket.emit('createRoom', {token: userToken, newRoom}, (callback: any) => {
+    this.socket.emit('createRoom', {newRoom}, (callback: any) => {
       if (callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
         this.alertService.onAlertReceived(callback);
@@ -39,15 +29,7 @@ export class SocketService {
 
   // Send fetchRoom SocketIO request
   fetchRoom = (roomName: string) => {
-    // get userId
-    const userToken = this.getUserToken();
-
-    // check if userId exists
-    if (!userToken) {
-      this.alertService.onAlertReceived('Error: There was a problem reading the current user\'s id.');
-      return;
-    }
-    this.socket.emit('fetchRoom', {token: userToken, roomName}, (callback: any) => {
+    this.socket.emit('fetchRoom', {roomName}, (callback: any) => {
       if (callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
         this.router.navigate(['/chat-rooms-list']);
@@ -58,22 +40,13 @@ export class SocketService {
   }
 
   // Handle onFetchRoom socketIO call from server
-  onFetchRoom = () => {
+  onFetchRoom = (): Observable<Room> => {
     return this.socket.fromEvent('fetchRoom');
   }
 
   // Send fetchAllRooms SocketIO request
   fetchAllRooms = () => {
-    // get userId
-    const userToken = this.getUserToken();
-
-    // check if userId exists
-    if (!userToken) {
-      this.alertService.onAlertReceived('Error: There was a problem reading the current user\'s id.');
-      return;
-    }
-
-    this.socket.emit('fetchAllRooms', {token: userToken}, (callback: any) => {
+    this.socket.emit('fetchAllRooms', {}, (callback: any) => {
       if (callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
         this.alertService.onAlertReceived(callback);
@@ -88,15 +61,7 @@ export class SocketService {
   }
 
   fetchUserRooms = () => {
-    // get userId
-    const userToken = this.getUserToken();
-    // check if userToken retrieved successfully
-    if (!userToken) {
-      this.alertService.onAlertReceived('There was a problem reading the current user\'s id.');
-      return;
-    }
-
-    this.socket.emit('fetchUserRooms', {token: userToken}, (callback: any) => {
+    this.socket.emit('fetchUserRooms', {}, (callback: any) => {
       if (callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
         this.alertService.onAlertReceived(callback);
@@ -116,11 +81,8 @@ export class SocketService {
 
   // Send socketIO joinRoom request to the server
   joinRoom = (roomName: string) => {
-    // get userId
-    const userToken = this.getUserToken();
-
     // emit the request using the socket instance
-    this.socket.emit('joinRoom', {token: userToken, roomName}, (callback: any) => {
+    this.socket.emit('joinRoom', {roomName}, (callback: any) => {
 
       if (callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
@@ -134,10 +96,7 @@ export class SocketService {
 
   // Send leave room socketIO request to server
   leaveRoom = (roomName: string) => {
-    // get userId
-    const userToken = this.getUserToken();
-
-    this.socket.emit('leaveRoom', {token: userToken, roomName}, (callback: any) => {
+    this.socket.emit('leaveRoom', {roomName}, (callback: any) => {
       if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
         this.alertService.onAlertReceived(callback);
@@ -156,9 +115,7 @@ export class SocketService {
   // send editRoom socketIO request to server
   editRoom = async (editedRoom: Room) => {
     let err = '';
-    const userToken = this.getUserToken();
-
-    await this.socket.emit('editRoom', {token: userToken, room: editedRoom}, (callback: any) => {
+    await this.socket.emit('editRoom', {room: editedRoom}, (callback: any) => {
 
       if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
@@ -174,11 +131,8 @@ export class SocketService {
 
   // send deleteRoom socketIO request to server
   deleteRoom = (roomId: string) => {
-    // get user token
-    const userToken = this.getUserToken();
-
     // send socketIO request
-    this.socket.emit('deleteRoom', {token: userToken, roomId}, (callback: any) => {
+    this.socket.emit('deleteRoom', {roomId}, (callback: any) => {
       if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
         this.alertService.onAlertReceived(callback);
@@ -191,10 +145,7 @@ export class SocketService {
 
   // Send message socketIO request to server
   sendMessage = (roomName: string, message: string) => {
-    // get userId
-    const userToken = this.getUserToken();
-
-    this.socket.emit('sendMessage', ({token: userToken, roomName, message}), (callback: any) => {
+    this.socket.emit('sendMessage', ({roomName, message}), (callback: any) => {
       // check if server returned an error
       if (callback.split(' ')[0] === 'Error:') {
         this.checkIfUserTokenExpired(callback);
@@ -210,14 +161,9 @@ export class SocketService {
     return this.socket.fromEvent('message');
   }
 
-  // get user token helper method
-  getUserToken = (): string | undefined => {
-    const userData: User | null = JSON.parse(localStorage.getItem('userData')!);
-    if (userData) {
-      return userData.token;
-    } else {
-      return undefined;
-    }
+  // Handle "error" socketIO response from server
+  onErrorReceived = () => {
+    return this.socket.fromEvent('connect_error');
   }
 
   checkIfUserTokenExpired = (callback: any) => {

@@ -2,8 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {Room} from "../interfaces/room";
 import {SocketService} from "../services/socket.service";
-import {AuthService} from "../services/auth.service";
-import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-new-chat-room',
@@ -13,13 +11,13 @@ import {Router} from "@angular/router";
 export class NewChatRoomComponent implements OnInit {
   newRoomForm!: FormGroup;
 
-  constructor(private socketService: SocketService, private authService: AuthService, private router: Router) { }
+  constructor(private socketService: SocketService) { }
 
   ngOnInit(): void {
     // initialize new form
     this.newRoomForm = new FormGroup({
       roomName: new FormControl('', [Validators.required, Validators.minLength(2)]),
-      roomDescription: new FormControl('', [Validators.required, Validators.minLength(6)])
+      roomDescription: new FormControl('', [Validators.required, Validators.minLength(10)])
     });
   }
 

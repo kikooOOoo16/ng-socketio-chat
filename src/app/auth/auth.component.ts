@@ -80,8 +80,6 @@ export class AuthComponent implements OnInit, OnDestroy {
     // subscribe to http request to send it through
     authObs.subscribe(resData => {
       this.isLoading = false;
-      // establish socketIO connection
-      this.socket.connect();
       // navigate to chat-rooms-list upon successful auth
       this.router.navigate(['/chat-rooms-list']);
     }, errorMessage => {
