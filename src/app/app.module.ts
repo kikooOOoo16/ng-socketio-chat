@@ -19,6 +19,7 @@ import {MyRoomsComponent} from './my-rooms-list/my-rooms.component';
 import {ChatRoomOptionsComponent} from './chat-room-options/chat-room-options.component';
 import {EditRoomComponent} from './my-rooms-list/edit-room/edit-room.component';
 import {CustomSocket} from "./services/customSocket";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import {CustomSocket} from "./services/customSocket";
   imports: [
     SocketIoModule,
     BrowserModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
     ReactiveFormsModule,

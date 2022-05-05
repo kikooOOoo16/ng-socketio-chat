@@ -5,11 +5,16 @@ import {AlertComponent} from "./shared/alert/alert.component";
 import {Subscription} from "rxjs";
 import {AlertService} from "./services/alert.service";
 import {SocketService} from "./services/socket.service";
+import {routerAnimation} from "./shared/animations/animations";
+import {RouterOutlet} from "@angular/router";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  animations: [
+    routerAnimation()
+  ]
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'ng-socketio-app';
@@ -61,5 +66,10 @@ export class AppComponent implements OnInit, OnDestroy {
         this.closeSub.unsubscribe();
       });
     }
+  }
+
+  public getRouteAnimation(outlet: RouterOutlet) {
+    // @ts-ignore
+    return outlet.activatedRouteData.num === undefined ? -1 : outlet.activatedRouteData.num;
   }
 }

@@ -11,31 +11,37 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: '/chat-rooms-list',
-    pathMatch: 'full'
+    pathMatch: 'full',
+    data: {num: 1}
   },
   {
     path: 'auth',
-    component: AuthComponent
+    component: AuthComponent,
+    data: {num: 4}
   },
   {
     path: 'chat-rooms-list',
     component: ChatRoomsComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: {num: 1}
   },
   {
     path: 'my-rooms-list',
     component: MyRoomsComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: {num: 3}
   },
   {
     path: 'new-room',
     component: NewChatRoomComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: {num: 2}
   },
   {
     path: 'room/:room-name',
     component: ChatRoomComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: {num: 3}
   }
 ];
 

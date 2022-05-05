@@ -1,6 +1,6 @@
 import {SocketService} from "../services/socket.service";
 import {ActivatedRoute, ParamMap} from "@angular/router";
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from 'rxjs';
 
 import {faMessage} from '@fortawesome/free-solid-svg-icons';
@@ -35,11 +35,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   lastMessageSent: string = '';
   private setIntervalId!: number;
 
-  constructor(
-    private authService: AuthService,
-    private socketService: SocketService,
-    private route: ActivatedRoute,
-  ) {
+  constructor(private authService: AuthService, private socketService: SocketService, private route: ActivatedRoute, private ref: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
@@ -59,6 +55,8 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
       this.room = roomData;
       if (roomData.chatHistory) {
         this.messages = [...this.messages, ...roomData.chatHistory];
+        // force change detection
+        this.ref.detectChanges();
       }
       // scroll to bottom after loading chat history
       setTimeout(() => this.scrollToBottom(), 1);
@@ -66,7 +64,9 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
 
     // listen for socketIO message response
     const onMessageSub = this.socketService.onReceiveMessage().subscribe((message: any) => {
-      this.messages.push(message);
+      this.messages = [...this.messages, message];
+      // force change detection
+      this.ref.detectChanges();
       // move chat-history to bottom, delay by 1ms
       setTimeout(() => this.scrollToBottom(), 1);
     });
@@ -81,7 +81,6 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
       this.calculateTimeFromLastMessage();
       return;
     }, 30000);
-
 
     // keep sub references in order to unsubscribe later
     this.subscriptions.push(userSub, onFetchRoomSub, onMessageSub, onRoomUsersUpdateSub);
@@ -124,7 +123,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
       const minutes = Math.floor((totalSeconds % 3600) / 60);
       const seconds = Math.floor((totalSeconds % 3600) % 60);
 
-      this.lastMessageSent = (`${hours !== 0 ? hours + 'h ' : ''}${(hours !== 0 || hours === 0 && minutes !== 0)? minutes + 'm ' : ''}${seconds !== 0 ? seconds + 's ' : ''}`);
+      this.lastMessageSent = (`${hours !== 0 ? hours + 'h ' : ''}${(hours !== 0 || hours === 0 && minutes !== 0) ? minutes + 'm ' : ''}${seconds !== 0 ? seconds + 's ' : ''}`);
     }
   }
 
