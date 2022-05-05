@@ -20,6 +20,7 @@ import {ChatRoomOptionsComponent} from './chat-room-options/chat-room-options.co
 import {EditRoomComponent} from './my-rooms-list/edit-room/edit-room.component';
 import {CustomSocket} from "./services/customSocket";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     MyRoomsComponent,
     ChatRoomOptionsComponent,
     EditRoomComponent,
+    FooterComponent,
   ],
   imports: [
     SocketIoModule,
