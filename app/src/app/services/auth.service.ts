@@ -7,7 +7,6 @@ import {AuthResponse} from "../interfaces/auth-response";
 import {environment} from "../../environments/environment";
 import {catchError, tap} from "rxjs/operators";
 import {CustomSocket} from "./customSocket";
-import {AlertService} from "./alert.service";
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +16,7 @@ export class AuthService {
   userSubject = new BehaviorSubject<User | null>(null);
   tokenExpirationTimer: any;
 
-  constructor(private http: HttpClient, private router: Router, private socket: CustomSocket, private alertService: AlertService) {
+  constructor(private http: HttpClient, private router: Router, private socket: CustomSocket) {
   }
 
   // send signUp request to server
