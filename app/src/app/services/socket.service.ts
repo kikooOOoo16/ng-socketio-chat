@@ -115,6 +115,7 @@ export class SocketService {
 
   // send editRoom socketIO request to server
   editRoom = async (editedRoom: Room) => {
+    console.log(`EditedRoom id = ${editedRoom._id}`);
     let err = '';
     await this.socket.emit('editRoom', {room: editedRoom}, (callback: any) => {
 
@@ -174,7 +175,7 @@ export class SocketService {
     });
   }
 
-  // Handle "error" socketIO response from server
+  // Helper methods for handling "error" socketIO response from server
   onErrorReceived = () => {
     return this.socket.fromEvent('connect_error');
   }
