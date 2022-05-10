@@ -7,7 +7,7 @@ import {HeaderComponent} from './header/header.component';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {SocketIoModule} from "ngx-socket-io";
 import {AuthComponent} from './auth/auth.component';
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ChatRoomsComponent} from './chat-rooms-list/chat-rooms.component';
 import {NewChatRoomComponent} from './new-chat-room/new-chat-room.component';
 import {ChatRoomComponent} from './chat-room/chat-room.component';
@@ -21,6 +21,7 @@ import {EditRoomComponent} from './my-rooms-list/edit-room/edit-room.component';
 import {CustomSocket} from "./services/customSocket";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import { FooterComponent } from './footer/footer.component';
+import { EditChatMessageComponent } from './chat-room/edit-chat-message/edit-chat-message.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { FooterComponent } from './footer/footer.component';
     ChatRoomOptionsComponent,
     EditRoomComponent,
     FooterComponent,
+    EditChatMessageComponent,
   ],
   imports: [
     SocketIoModule,
@@ -45,6 +47,7 @@ import { FooterComponent } from './footer/footer.component';
     HttpClientModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    FormsModule,
     FontAwesomeModule
   ],
   providers: [

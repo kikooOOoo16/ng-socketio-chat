@@ -5,6 +5,7 @@ import {AuthService} from "./auth.service";
 import {Observable} from "rxjs";
 import {AlertService} from "./alert.service";
 import {CustomSocket} from "./customSocket";
+import {SocketMessage} from "../interfaces/socketMessage";
 
 @Injectable({
   providedIn: 'root'
@@ -56,7 +57,7 @@ export class SocketService {
   }
 
   // Handle fetchAllRooms socketIO call from the server
-  onFetchAllRooms = () => {
+  onFetchAllRooms = (): Observable<Room[]> => {
     return this.socket.fromEvent('fetchAllRooms');
   }
 
@@ -75,7 +76,7 @@ export class SocketService {
     return this.socket.fromEvent('fetchUserRooms');
   }
 
-  onRoomsListUpdate = () => {
+  onRoomsListUpdate = (): Observable<Room[]> => {
     return this.socket.fromEvent('roomsListUpdate');
   }
 
@@ -108,8 +109,8 @@ export class SocketService {
   }
 
   // Handle onRoomUsersUpdate SocketIO call from server
-  onRoomUsersUpdate = () => {
-    return this.socket.fromEvent('roomUsersUpdate')
+  onRoomDataUpdate = (): Observable<Room> => {
+    return this.socket.fromEvent('roomDataUpdate');
   }
 
   // send editRoom socketIO request to server
@@ -157,8 +158,20 @@ export class SocketService {
   }
 
   // Handle "message" socketIO call form server
-  onReceiveMessage = () => {
+  onReceiveMessage = (): Observable<SocketMessage> => {
     return this.socket.fromEvent('message');
+  }
+
+  editMessage = (roomName: string, editedMessage: SocketMessage,) => {
+    this.socket.emit('editMessage', ({roomName, editedMessage}), (callback: any) => {
+      // check if server returned an error
+      if (callback.split(' ')[0] === 'Error:') {
+        this.checkIfUserTokenExpired(callback);
+        this.checkIfUserNotInRoom(callback);
+        this.alertService.onAlertReceived(callback);
+        return;
+      }
+    });
   }
 
   // Handle "error" socketIO response from server

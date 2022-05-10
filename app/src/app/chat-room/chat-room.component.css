@@ -150,7 +150,8 @@ div.chat-side {
   font-family: 'Nunito', sans-serif;
   border-radius: 7px;
   display: inline-block;
-  position: relative
+  position: relative;
+  transition: all 0.6s;
 }
 
 .chat .chat-history .message:after {
@@ -201,6 +202,40 @@ div.chat-side {
   /*position: absolute;*/
   bottom: 0;
   width: 100%;
+}
+
+div.message.my-message:hover .message-edit-btn {
+  display: flex;
+}
+
+.edited-message {
+  position: relative;
+  bottom: 0;
+  right: 30px;
+  font-size: 0.8em;
+}
+
+p.text-muted {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.message-edit-btn {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  right: 20px;
+  color: #a15f35;
+  font-size: 0.9em;
+  margin-top: 15px;
+  border-radius: 5px;
+  border: none;
+  transition: all 0.1s;
+}
+
+.message-edit-btn:hover {
+  font-size: 1.1em;
+  color: #bb9074;
 }
 
 .input-group-text {

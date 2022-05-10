@@ -1,3 +1,4 @@
+<ng-template appPlaceholder></ng-template>
 <div class="container mx-0">
   <div class="row">
     <div class="col-12">
@@ -32,14 +33,15 @@
                   <div class="col-lg-12">
                     <div class="chat-about">
                       <h6 class="mb-2 pb-2">{{room.name}}</h6>
-                      <small *ngIf="lastMessageSent !== ''" class="text-muted">Last message: {{lastMessageSent}} ago</small>
+                      <small *ngIf="lastMessageSent !== ''" class="text-muted">Last message: {{lastMessageSent}}
+                        ago</small>
                     </div>
                   </div>
                 </div>
               </div>
               <div #chatHistory class="chat-history">
-                <ul *ngIf="messages && messages.length > 0; else noMessages" class="m-b-0">
-                  <li [ngClass]="{'user-message' : message.author.id === userId!}" *ngFor="let message of messages"
+                <ul *ngIf="chatMessages && chatMessages.length > 0; else noMessages" class="m-b-0">
+                  <li [ngClass]="{'user-message' : message.author.id === userId!}" *ngFor="let message of chatMessages"
                       class="clearfix">
                     <div class="message-data">
                       <span class="message-data-time text-muted">{{message.author.name}}
@@ -47,7 +49,15 @@
                     </div>
                     <div
                       [ngClass]="{'my-message' : message.author.id === userId!, 'other-message' : message.author.id !== userId!}"
-                      class="message ">{{message.text}}</div>
+                      class="message ">
+                      {{message.text}}
+                      <span class="edited-message" *ngIf="message.edited && message.edited === true">
+                        <p class="text-muted">edited</p>
+                      </span>
+                      <span *ngIf="message.author.id === userId!" class="message-edit-btn" (click)="editChatMessage(message)">
+                        <fa-icon [icon]="faEdit"></fa-icon>
+                      </span>
+                    </div>
                   </li>
                 </ul>
                 <ng-template #noMessages>
@@ -62,7 +72,7 @@
                 <div class="input-group mb-0">
                   <div>
                     <span class="input-group-text">
-                      <fa-icon class="nav-icons pr-1" [icon]="faMessage"></fa-icon>
+                      <fa-icon class="pr-1" [icon]="faMessage"></fa-icon>
                     </span>
                   </div>
                   <input #chatInput (keyup.enter)="sendMessage()" type="text" class="form-control"

@@ -1,0 +1,13 @@
+<div class="backdrop" (click)="onClose()"></div>
+<div class="edit-box">
+  <div class="d-flex flex-column bd-highlight mb-3">
+    <label for="editMessage"></label>
+    <textarea #editMessageInput class="form-control" type="text" id="editMessage" value="{{message.text}}" [(ngModel)]="editedMessage" cols="20" rows="4"></textarea>
+  </div>
+  <div class="d-flex flex-row justify-content-center mb-3">
+    <button [disabled]="editedMessage.trim()===message.text" class="edit-btn btn rounded-0" (click)="onEdit(editMessageInput.value)">Edit</button>
+    <button class="close-btn btn rounded-0" (click)="onClose()">Cancel</button>
+  </div>
+</div>
+
+
