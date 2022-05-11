@@ -48,10 +48,10 @@
                         : {{ message.createdAtUnixTime |  date:'dd/MM/yyyy HH:mm'}}</span>
                     </div>
                     <div
-                      [ngClass]="{'my-message' : message.author.id === userId!, 'other-message' : message.author.id !== userId!}"
+                      [ngClass]="{'my-message' : message.author.id === userId!, 'other-message' : message.author.id !== userId!, 'edited-message': message.edited && message.edited === true}"
                       class="message ">
                       {{message.text}}
-                      <span class="edited-message" *ngIf="message.edited && message.edited === true">
+                      <span class="edited-message-mark" *ngIf="message.edited && message.edited === true">
                         <p class="text-muted">edited</p>
                       </span>
                       <span *ngIf="message.author.id === userId!" class="message-edit-btn" (click)="editChatMessage(message)">
