@@ -12,8 +12,8 @@
   position: fixed;
   border-radius: 10px;
   top: 30vh;
-  left: 25vw;
-  width: 50vw;
+  left: 30vw;
+  width: 40vw;
   padding: 16px;
   z-index: 100;
   background: #ffffff;
@@ -27,7 +27,6 @@
 }
 
 .close-btn {
-  margin-left: 20px;
   background-color: #d20006;
   color: #ffffff;
 }

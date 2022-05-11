@@ -3,14 +3,15 @@ import {ActivatedRoute, ParamMap} from "@angular/router";
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from 'rxjs';
 
-import {faMessage, faPencilSquare, faEdit} from '@fortawesome/free-solid-svg-icons';
+import {faEdit, faMessage, faPencilSquare} from '@fortawesome/free-solid-svg-icons';
 
 import {Room} from "../interfaces/room";
 import {SocketMessage} from "../interfaces/socketMessage";
 import {AuthService} from "../services/auth.service";
 import {PlaceholderDirective} from "../shared/placeholder/placeholder.directive";
-import {AlertComponent} from "../shared/alert/alert.component";
 import {EditChatMessageComponent} from "./edit-chat-message/edit-chat-message.component";
+import {ShowAdminOptionsComponent} from "./show-admin-options/show-admin-options.component";
+import {User} from "../interfaces/user";
 
 @Component({
   selector: 'app-chat-room',
@@ -19,8 +20,9 @@ import {EditChatMessageComponent} from "./edit-chat-message/edit-chat-message.co
 })
 export class ChatRoomComponent implements OnInit, OnDestroy {
   // helper directive to get host view container ref
-  @ViewChild(PlaceholderDirective) editMessageHost!: PlaceholderDirective;
+  @ViewChild(PlaceholderDirective) modalComponentsHost!: PlaceholderDirective;
   private editMessageSub!: Subscription;
+  private showAdminOptionsSub!: Subscription;
 
   private subscriptions: Subscription[] = [];
 
@@ -36,7 +38,6 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     description: '',
   };
   // chat room messages
-  // messages = new BehaviorSubject<SocketMessage[]>([]);
   chatMessages: SocketMessage[] = [];
   userId!: string;
   // last message sent timestamp
@@ -146,9 +147,9 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
 
   editChatMessage = (message: SocketMessage) => {
 
-    if (this.editMessageHost) {
+    if (this.modalComponentsHost) {
       //get hostViewContainer ref by using alertHost directive
-      const hostViewContainer = this.editMessageHost.viewContainerRef;
+      const hostViewContainer = this.modalComponentsHost.viewContainerRef;
       hostViewContainer.clear();
 
       // create the AlertComponent on the hostViewContainer
@@ -161,6 +162,28 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
       this.editMessageSub = componentRef.instance.close.subscribe(() => {
         hostViewContainer.clear();
         this.editMessageSub.unsubscribe();
+      });
+    }
+  }
+
+  showAdminOptions = (user: User) => {
+    if (this.modalComponentsHost && this.room.author === this.userId && user._id !== this.userId) {
+      //get hostViewContainer ref by using alertHost directive
+      const hostViewContainer = this.modalComponentsHost.viewContainerRef;
+      hostViewContainer.clear();
+
+      // create the AdminOptionsComponent on the hostViewContainer
+      const componentRef = hostViewContainer.createComponent(ShowAdminOptionsComponent);
+
+      // send @Input message and @Input roomName to the AlertComponent in order send editMessage socketIO event
+      componentRef.instance.userId = user._id;
+      componentRef.instance.userName = user.name;
+      componentRef.instance.roomName = this.room.name;
+
+      // close AdminOptions modal component
+      this.showAdminOptionsSub = componentRef.instance.close.subscribe(() => {
+        hostViewContainer.clear();
+        this.showAdminOptionsSub.unsubscribe();
       });
     }
   }

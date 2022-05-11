@@ -30,9 +30,7 @@ div.chat-side {
   padding: 0;
 }
 .chat-app .people-list {
-  /*width: 280px;*/
   height: 60vh;
-  /*position: absolute;*/
   left: 0;
   top: 0;
   padding: 20px;
@@ -42,7 +40,6 @@ div.chat-side {
 
 .chat-app .chat {
   height: 60vh;
-  /*margin-left: 280px;*/
   border-left: 1px solid #eaeaea
 }
 
@@ -90,6 +87,20 @@ div.chat-side {
 .people-list .status {
   color: #999;
   font-size: 13px
+}
+
+.admin-user-options-menu {
+  display: none;
+  color: #ffffff;
+  background-color: #974309;
+  position: absolute;
+  z-index: 2;
+}
+
+.admin-user-options {
+  display: none;
+  position: absolute;
+  z-index: 2;
 }
 
 .chat .chat-header {
@@ -199,7 +210,6 @@ div.chat-side {
 }
 
 .chat-message {
-  /*position: absolute;*/
   bottom: 0;
   width: 100%;
 }
