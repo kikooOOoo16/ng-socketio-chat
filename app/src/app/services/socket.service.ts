@@ -135,6 +135,10 @@ export class SocketService {
     });
   }
 
+  onBannedFromRoom = (): Observable<SocketMessage> => {
+    return this.socket.fromEvent('bannedFromRoom');
+  }
+
   // Handle onRoomUsersUpdate SocketIO call from server
   onRoomDataUpdate = (): Observable<Room> => {
     return this.socket.fromEvent('roomDataUpdate');

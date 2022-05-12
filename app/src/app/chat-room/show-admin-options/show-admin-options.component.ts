@@ -29,6 +29,9 @@ export class ShowAdminOptionsComponent implements OnInit {
   }
 
   onBanUser = () => {
-
+    // send banUser event
+    this.socketService.banUserFromRoom(this.roomName, this.userId);
+    // close modal component
+    this.onClose();
   }
 }

@@ -46,7 +46,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   //helper var for storing interval number
   private setIntervalId!: number;
   // helper var for keeping track of user kicked from room status
-  kickedFromRoom = false;
+  removedFromRoom = false;
 
   constructor(
     private authService: AuthService,
@@ -101,7 +101,17 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
       .subscribe((kickedFromRoomMsg: SocketMessage) => {
         if (kickedFromRoomMsg) {
           this.alertService.onAlertReceived(`${kickedFromRoomMsg.author.name} : ${kickedFromRoomMsg.text}`);
-          this.kickedFromRoom = true;
+          this.removedFromRoom = true;
+          this.router.navigate(['/chat-rooms-list']);
+        }
+      });
+
+    // listen for socketIO bannedFromRoom event
+    const bannedFromRoomSub = this.socketService.onBannedFromRoom()
+      .subscribe((bannedFromRoomMsg: SocketMessage) => {
+        if (bannedFromRoomMsg) {
+          this.alertService.onAlertReceived(`${bannedFromRoomMsg.author.name} : ${bannedFromRoomMsg.text}`);
+          this.removedFromRoom = true;
           this.router.navigate(['/chat-rooms-list']);
         }
       });
@@ -113,7 +123,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     }, 30000);
 
     // keep sub references in order to unsubscribe later
-    this.subscriptions.push(userSub, onFetchRoomSub, onMessageSub, onRoomDataUpdateSub, kickedFromRoomSub);
+    this.subscriptions.push(userSub, onFetchRoomSub, onMessageSub, onRoomDataUpdateSub, kickedFromRoomSub, bannedFromRoomSub);
   }
 
   ngOnDestroy(): void {
@@ -121,7 +131,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
 
     // if the user wasn't kicked from the room try to leave gracefully
-    if (!this.kickedFromRoom) {
+    if (!this.removedFromRoom) {
       // trigger user leave room
       this.socketService.leaveRoom(this.room.name);
     }
