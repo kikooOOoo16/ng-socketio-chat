@@ -12,6 +12,7 @@ export class AlertService {
   }
 
   onAlertReceived = (alert: string) => {
+    console.log('OnAlertReceived triggered !');
     this.alertSubject.next(alert);
   }
 }

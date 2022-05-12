@@ -8,7 +8,7 @@
             <label for="roomName" class="form-label text-muted">Room Name</label>
             <input type="text" name="roomName" formControlName="roomName" class="form-control"
                    id="exampleFormControlInput1"
-                   placeholder="Enter room name." required>
+                   required>
             <p class="invalid-input-msg"
                *ngIf="editRoomForm.get('roomName')!.touched && editRoomForm.get('roomName')!.invalid">
               Please enter a
@@ -17,7 +17,7 @@
           <div class="mb-3">
             <label for="roomDescription" class="form-label text-muted">Description</label>
             <textarea class="form-control" name="roomDescription" formControlName="roomDescription" rows="3"
-                      placeholder="Enter a description about the room you want to create." required minlength="10"></textarea>
+                      required minlength="10"></textarea>
             <p class="invalid-input-msg"
                *ngIf="editRoomForm.get('roomDescription')!.touched && editRoomForm.get('roomDescription')!.invalid">
               Please enter a valid room description.

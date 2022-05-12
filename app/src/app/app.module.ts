@@ -22,6 +22,7 @@ import {CustomSocket} from "./services/customSocket";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import { FooterComponent } from './footer/footer.component';
 import { EditChatMessageComponent } from './chat-room/edit-chat-message/edit-chat-message.component';
+import { ShowAdminOptionsComponent } from './chat-room/show-admin-options/show-admin-options.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { EditChatMessageComponent } from './chat-room/edit-chat-message/edit-cha
     EditRoomComponent,
     FooterComponent,
     EditChatMessageComponent,
+    ShowAdminOptionsComponent,
   ],
   imports: [
     SocketIoModule,

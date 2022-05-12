@@ -108,6 +108,21 @@ export class SocketService {
     });
   }
 
+  // Send kick user from room socketIO request to server
+  kickUserFromRoom = (roomName: string, userId: string) => {
+    this.socket.emit('kickUserFromRoom', {roomName, userId}, (callback: any) => {
+      if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
+        this.checkIfUserTokenExpired(callback);
+        this.alertService.onAlertReceived(callback);
+        return;
+      }
+    })
+  }
+
+  onKickedFromRoom = (): Observable<SocketMessage> => {
+    return this.socket.fromEvent('kickedFromRoom');
+  }
+
   // Handle onRoomUsersUpdate SocketIO call from server
   onRoomDataUpdate = (): Observable<Room> => {
     return this.socket.fromEvent('roomDataUpdate');

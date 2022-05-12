@@ -1,5 +1,5 @@
 import {SocketService} from "../services/socket.service";
-import {ActivatedRoute, ParamMap} from "@angular/router";
+import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from 'rxjs';
 
@@ -12,6 +12,7 @@ import {PlaceholderDirective} from "../shared/placeholder/placeholder.directive"
 import {EditChatMessageComponent} from "./edit-chat-message/edit-chat-message.component";
 import {ShowAdminOptionsComponent} from "./show-admin-options/show-admin-options.component";
 import {User} from "../interfaces/user";
+import {AlertService} from "../services/alert.service";
 
 @Component({
   selector: 'app-chat-room',
@@ -44,8 +45,15 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   lastMessageSent: string = '';
   //helper var for storing interval number
   private setIntervalId!: number;
+  // helper var for keeping track of user kicked from room status
+  kickedFromRoom = false;
 
-  constructor(private authService: AuthService, private socketService: SocketService, private route: ActivatedRoute) {
+  constructor(
+    private authService: AuthService,
+    private socketService: SocketService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private alertService: AlertService) {
   }
 
   ngOnInit(): void {
@@ -60,7 +68,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
       this.userId = userData!._id;
     });
 
-    // listen for socketIO fetchRoom response
+    // listen for socketIO fetchRoom event
     const onFetchRoomSub = this.socketService.onFetchRoom()
       .subscribe((roomData: Room) => {
         this.room = roomData;
@@ -71,7 +79,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
         setTimeout(() => this.scrollToBottom(), 1);
       });
 
-    // listen for socketIO message response
+    // listen for socketIO message event
     const onMessageSub = this.socketService.onReceiveMessage()
       .subscribe((message: any) => {
         this.chatMessages = [...this.chatMessages, message];
@@ -81,11 +89,21 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
         this.calculateTimeFromLastMessage();
       });
 
-    // listen for socketIO roomUsersUpdate request
-    const onRoomDataUpdate = this.socketService.onRoomDataUpdate()
+    // listen for socketIO roomUsersUpdate event
+    const onRoomDataUpdateSub = this.socketService.onRoomDataUpdate()
       .subscribe((roomData: any) => {
         this.room = {...roomData};
         this.chatMessages = roomData.chatHistory;
+      });
+
+    // listen for socketIO kickedFromRoom event
+    const kickedFromRoomSub = this.socketService.onKickedFromRoom()
+      .subscribe((kickedFromRoomMsg: SocketMessage) => {
+        if (kickedFromRoomMsg) {
+          this.alertService.onAlertReceived(`${kickedFromRoomMsg.author.name} : ${kickedFromRoomMsg.text}`);
+          this.kickedFromRoom = true;
+          this.router.navigate(['/chat-rooms-list']);
+        }
       });
 
     // calculate last message sent time avery 5 minutes
@@ -95,15 +113,18 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     }, 30000);
 
     // keep sub references in order to unsubscribe later
-    this.subscriptions.push(userSub, onFetchRoomSub, onMessageSub, onRoomDataUpdate);
+    this.subscriptions.push(userSub, onFetchRoomSub, onMessageSub, onRoomDataUpdateSub, kickedFromRoomSub);
   }
 
   ngOnDestroy(): void {
     // unsubscribe to prevent memory leeks
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
 
-    // trigger user leave room
-    this.socketService.leaveRoom(this.room.name);
+    // if the user wasn't kicked from the room try to leave gracefully
+    if (!this.kickedFromRoom) {
+      // trigger user leave room
+      this.socketService.leaveRoom(this.room.name);
+    }
 
     // clear set interval
     if (this.setIntervalId) {
