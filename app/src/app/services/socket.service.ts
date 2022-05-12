@@ -119,8 +119,20 @@ export class SocketService {
     })
   }
 
+  // Handle onKickedFromRoom event for user
   onKickedFromRoom = (): Observable<SocketMessage> => {
     return this.socket.fromEvent('kickedFromRoom');
+  }
+
+  // Send ban user from room socketIO request to server
+  banUserFromRoom = (roomName: string, userId: string) => {
+    this.socket.emit('banUserFromRoom', {roomName, userId}, (callback: any) => {
+      if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
+        this.checkIfUserTokenExpired(callback);
+        this.alertService.onAlertReceived(callback);
+        return;
+      }
+    });
   }
 
   // Handle onRoomUsersUpdate SocketIO call from server

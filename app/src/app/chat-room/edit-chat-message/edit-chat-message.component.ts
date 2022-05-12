@@ -33,5 +33,4 @@ export class EditChatMessageComponent implements OnInit {
     this.socketService.editMessage(this.roomName, editedMessage);
     this.close.emit();
   }
-
 }
