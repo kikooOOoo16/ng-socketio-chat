@@ -37,16 +37,16 @@
   color: #ffffff;
 }
 
-.option-btn {
+.edit-btn {
   margin-right: 20px;
   background-color: #08799c;
   color: #ffffff;
 }
 
-.option-btn:hover {
+.edit-btn:hover {
   background-color: #5fabbf;
 }
 
-.option-btn:disabled {
+.edit-btn:disabled {
   background-color: #8c9395;
 }
