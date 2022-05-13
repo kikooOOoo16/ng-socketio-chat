@@ -6,7 +6,7 @@ import {Subscription} from 'rxjs';
 import {faEdit, faMessage, faPencilSquare} from '@fortawesome/free-solid-svg-icons';
 
 import {Room} from "../interfaces/room";
-import {SocketMessage} from "../interfaces/socketMessage";
+import {SocketMessage} from "../interfaces/socket-message";
 import {AuthService} from "../services/auth.service";
 import {PlaceholderDirective} from "../shared/placeholder/placeholder.directive";
 import {EditChatMessageComponent} from "./edit-chat-message/edit-chat-message.component";

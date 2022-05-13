@@ -1,5 +1,5 @@
 import {User} from "./user";
-import {SocketMessage} from "./socketMessage";
+import {SocketMessage} from "./socket-message";
 
 export interface Room {
   _id?: string;

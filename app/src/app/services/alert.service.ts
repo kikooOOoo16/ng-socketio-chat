@@ -11,8 +11,8 @@ export class AlertService {
   constructor() {
   }
 
-  onAlertReceived = (alert: string) => {
+  onAlertReceived = (alertMessage: string) => {
     console.log('OnAlertReceived triggered !');
-    this.alertSubject.next(alert);
+    this.alertSubject.next(alertMessage);
   }
 }

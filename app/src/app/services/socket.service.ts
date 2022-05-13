@@ -5,22 +5,28 @@ import {AuthService} from "./auth.service";
 import {Observable} from "rxjs";
 import {AlertService} from "./alert.service";
 import {CustomSocket} from "./customSocket";
-import {SocketMessage} from "../interfaces/socketMessage";
+import {SocketMessage} from "../interfaces/socket-message";
+import {SocketHelperService} from "./socket-helper.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocketService {
 
-  constructor(private socket: CustomSocket, private router: Router, private authService: AuthService, private alertService: AlertService) {
+  constructor(
+    private socket: CustomSocket,
+    private router: Router,
+    private authService: AuthService,
+    private alertService: AlertService,
+    private socketHelperService: SocketHelperService) {
   }
 
   // Send createRoom SocketIO request
   createRoom = (newRoom: Room) => {
-    this.socket.emit('createRoom', {newRoom}, (callback: any) => {
-      if (callback.split(' ')[0] === 'Error:') {
-        this.checkIfUserTokenExpired(callback);
-        this.alertService.onAlertReceived(callback);
+    this.socket.emit('createRoom', {newRoom}, (callback: { message: string; field?: string }[]) => {
+      if (callback && callback.length && callback[0].message && callback[0].message.split(' ')[0] === 'Error:') {
+        this.socketHelperService.checkIfUserTokenExpired(callback[0].message);
+        this.alertService.onAlertReceived(callback[0].message);
         return;
       }
       // if no error navigate to room component callback is the returned created room name
@@ -30,11 +36,12 @@ export class SocketService {
 
   // Send fetchRoom SocketIO request
   fetchRoom = (roomName: string) => {
-    this.socket.emit('fetchRoom', {roomName}, (callback: any) => {
-      if (callback.split(' ')[0] === 'Error:') {
-        this.checkIfUserTokenExpired(callback);
+    console.log('Send fetchRoom request.');
+    this.socket.emit('fetchRoom', {roomName}, (callback: { message: string; field?: string }[]) => {
+      if (callback && callback.length && callback[0].message && callback[0].message.split(' ')[0] === 'Error:') {
+        this.socketHelperService.checkIfUserTokenExpired(callback[0].message);
         this.router.navigate(['/chat-rooms-list']);
-        this.alertService.onAlertReceived(callback);
+        this.alertService.onAlertReceived(callback[0].message);
         return;
       }
     });
@@ -47,12 +54,9 @@ export class SocketService {
 
   // Send fetchAllRooms SocketIO request
   fetchAllRooms = () => {
-    this.socket.emit('fetchAllRooms', {}, (callback: any) => {
-      if (callback.split(' ')[0] === 'Error:') {
-        this.checkIfUserTokenExpired(callback);
-        this.alertService.onAlertReceived(callback);
-        return;
-      }
+    console.log('Send fetchAllRooms request.')
+    this.socket.emit('fetchAllRooms', {}, (callback: { message: string; field?: string }[]) => {
+      this.socketHelperService.handleCallbackEmitWhenNotInRoom(callback);
     });
   }
 
@@ -62,12 +66,8 @@ export class SocketService {
   }
 
   fetchUserRooms = () => {
-    this.socket.emit('fetchUserRooms', {}, (callback: any) => {
-      if (callback.split(' ')[0] === 'Error:') {
-        this.checkIfUserTokenExpired(callback);
-        this.alertService.onAlertReceived(callback);
-        return;
-      }
+    this.socket.emit('fetchUserRooms', {}, (callback: { message: string; field?: string }[]) => {
+      this.socketHelperService.handleCallbackEmitWhenNotInRoom(callback);
     });
   }
 
@@ -82,27 +82,22 @@ export class SocketService {
 
   // Send socketIO joinRoom request to the server
   joinRoom = (roomName: string) => {
+    console.log('Send JoinRoom request.');
     // emit the request using the socket instance
-    this.socket.emit('joinRoom', {roomName}, (callback: any) => {
-
-      if (callback.split(' ')[0] === 'Error:') {
-        this.checkIfUserTokenExpired(callback);
-        this.alertService.onAlertReceived(callback);
-        return;
-      }
+    this.socket.emit('joinRoom', {roomName}, (callback: { message: string; field?: string }[]) => {
+      const {err} = this.socketHelperService.handleCallbackEmitWhenNotInRoom(callback);
       // if no error response navigate to the joined room (callback is roomName if no error)
-      this.router.navigate([`/room/${callback}`]);
+      if (!err) {
+        this.router.navigate([`/room/${callback}`]);
+      }
     });
   }
 
   // Send leave room socketIO request to server
   leaveRoom = (roomName: string) => {
-    this.socket.emit('leaveRoom', {roomName}, (callback: any) => {
-      if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
-        this.checkIfUserTokenExpired(callback);
-        this.alertService.onAlertReceived(callback);
-        return;
-      }
+    console.log('Send leaveRoom request.')
+    this.socket.emit('leaveRoom', {roomName}, (callback: { message: string; field?: string }[]) => {
+      this.socketHelperService.handleCallbackEmitWhenInRoom(callback);
       // if no callback error navigate to chat-rooms-list
       this.router.navigate(['chat-rooms-list']);
     });
@@ -110,12 +105,8 @@ export class SocketService {
 
   // Send kick user from room socketIO request to server
   kickUserFromRoom = (roomName: string, userId: string) => {
-    this.socket.emit('kickUserFromRoom', {roomName, userId}, (callback: any) => {
-      if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
-        this.checkIfUserTokenExpired(callback);
-        this.alertService.onAlertReceived(callback);
-        return;
-      }
+    this.socket.emit('kickUserFromRoom', {roomName, userId}, (callback: { message: string; field?: string }[]) => {
+      this.socketHelperService.handleCallbackEmitWhenInRoom(callback);
     })
   }
 
@@ -126,12 +117,8 @@ export class SocketService {
 
   // Send ban user from room socketIO request to server
   banUserFromRoom = (roomName: string, userId: string) => {
-    this.socket.emit('banUserFromRoom', {roomName, userId}, (callback: any) => {
-      if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
-        this.checkIfUserTokenExpired(callback);
-        this.alertService.onAlertReceived(callback);
-        return;
-      }
+    this.socket.emit('banUserFromRoom', {roomName, userId}, (callback: { message: string; field?: string }[]) => {
+      this.socketHelperService.handleCallbackEmitWhenInRoom(callback);
     });
   }
 
@@ -148,12 +135,12 @@ export class SocketService {
   editRoom = async (editedRoom: Room) => {
     console.log(`EditedRoom id = ${editedRoom._id}`);
     let err = '';
-    await this.socket.emit('editRoom', {room: editedRoom}, (callback: any) => {
+    await this.socket.emit('editRoom', {room: editedRoom}, (callback: { message: string; field?: string }[]) => {
+      if (callback && callback.length && callback[0].message && callback[0].message.split(' ')[0] === 'Error:') {
 
-      if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
-        this.checkIfUserTokenExpired(callback);
-        err = callback;
-        this.alertService.onAlertReceived(callback);
+        this.socketHelperService.checkIfUserTokenExpired(callback[0].message);
+        err = callback[0].message
+        this.alertService.onAlertReceived(callback[0].message);
       }
     });
     if (err === '') {
@@ -165,27 +152,20 @@ export class SocketService {
   // send deleteRoom socketIO request to server
   deleteRoom = (roomId: string) => {
     // send socketIO request
-    this.socket.emit('deleteRoom', {roomId}, (callback: any) => {
-      if (typeof callback === "string" && callback.split(' ')[0] === 'Error:') {
-        this.checkIfUserTokenExpired(callback);
-        this.alertService.onAlertReceived(callback);
-        return;
+    this.socket.emit('deleteRoom', {roomId}, (callback: { message: string; field?: string }[]) => {
+      const {err} = this.socketHelperService.handleCallbackEmitWhenNotInRoom(callback);
+
+      if (!err) {
+        this.alertService.onAlertReceived('Info: Successfully deleted room.');
       }
     });
-
-    this.alertService.onAlertReceived('Info: Successfully deleted room.');
   }
 
   // Send message socketIO request to server
   sendMessage = (roomName: string, message: string) => {
-    this.socket.emit('sendMessage', ({roomName, message}), (callback: any) => {
+    this.socket.emit('sendMessage', ({roomName, message}), (callback: { message: string; field?: string }[]) => {
       // check if server returned an error
-      if (callback.split(' ')[0] === 'Error:') {
-        this.checkIfUserTokenExpired(callback);
-        this.checkIfUserNotInRoom(callback);
-        this.alertService.onAlertReceived(callback);
-        return;
-      }
+      this.socketHelperService.handleCallbackEmitWhenInRoom(callback);
     });
   }
 
@@ -195,33 +175,13 @@ export class SocketService {
   }
 
   editMessage = (roomName: string, editedMessage: SocketMessage,) => {
-    this.socket.emit('editMessage', ({roomName, editedMessage}), (callback: any) => {
-      // check if server returned an error
-      if (callback.split(' ')[0] === 'Error:') {
-        this.checkIfUserTokenExpired(callback);
-        this.checkIfUserNotInRoom(callback);
-        this.alertService.onAlertReceived(callback);
-        return;
-      }
+    this.socket.emit('editMessage', ({roomName, editedMessage}), (callback: { message: string; field?: string }[]) => {
+      this.socketHelperService.handleCallbackEmitWhenInRoom(callback);
     });
   }
 
   // Helper methods for handling "error" socketIO response from server
   onErrorReceived = () => {
     return this.socket.fromEvent('connect_error');
-  }
-
-  checkIfUserTokenExpired = (callback: any) => {
-    if (callback === 'Error: User token has expired.') {
-      // if token expired logout user.
-      this.authService.handleUserStateOnLogout();
-      return;
-    }
-  }
-
-  checkIfUserNotInRoom = (callback: any) => {
-    if (callback === 'Error: The requested user is not in the current room.') {
-      this.router.navigate([`/chat-rooms-list`]);
-    }
   }
 }

@@ -20,9 +20,9 @@ import {ChatRoomOptionsComponent} from './chat-room-options/chat-room-options.co
 import {EditRoomComponent} from './my-rooms-list/edit-room/edit-room.component';
 import {CustomSocket} from "./services/customSocket";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import { FooterComponent } from './footer/footer.component';
-import { EditChatMessageComponent } from './chat-room/edit-chat-message/edit-chat-message.component';
-import { ShowAdminOptionsComponent } from './chat-room/show-admin-options/show-admin-options.component';
+import {FooterComponent} from './footer/footer.component';
+import {EditChatMessageComponent} from './chat-room/edit-chat-message/edit-chat-message.component';
+import {ShowAdminOptionsComponent} from './chat-room/show-admin-options/show-admin-options.component';
 
 @NgModule({
   declarations: [

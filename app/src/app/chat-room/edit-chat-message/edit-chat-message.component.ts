@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {SocketMessage} from "../../interfaces/socketMessage";
+import {SocketMessage} from "../../interfaces/socket-message";
 import {SocketService} from "../../services/socket.service";
 
 @Component({
