@@ -21,7 +21,11 @@ export class AuthService {
 
   // send signUp request to server
   signUp = (name: string, email: string, password: string) => {
-    return this.http.post<AuthResponse>(`${environment.serverUrl}/user/signup`, {name, email, password}, {withCredentials: true})
+    return this.http.post<AuthResponse>(`${environment.serverUrl}/user/signup`, {
+      name,
+      email,
+      password
+    }, {withCredentials: true})
       .pipe(catchError(this.handleError),
         tap((resData: AuthResponse) => {
           this.handleAuthentication(resData.message, resData.user, resData.expiresIn);
@@ -32,7 +36,10 @@ export class AuthService {
   // send signIn request to server
   // withCredentials: true => is enabled because out API and Angular domains are different. It helps attach the cookie to API calls for cross-site requests
   signIn = (email: string, password: string) => {
-    return this.http.post<AuthResponse>(`${environment.serverUrl}/user/signin`, {email, password}, {withCredentials: true})
+    return this.http.post<AuthResponse>(`${environment.serverUrl}/user/signin`, {
+      email,
+      password
+    }, {withCredentials: true})
       .pipe(catchError(this.handleError),
         tap((resData: AuthResponse) => {
           this.handleAuthentication(resData.message, resData.user, resData.expiresIn);
@@ -104,6 +111,11 @@ export class AuthService {
     let errMessage = 'An unknown error occurred!';
     // check if error response contains specific message and throw it, if not throw generic
     if (!errorResponse.error.message) {
+      return throwError(errMessage);
+    }
+    if (errorResponse.error.message === 'Unauthorized action.') {
+      this.handleUserStateOnLogout();
+      errMessage = errorResponse.error.message;
       return throwError(errMessage);
     }
     if (errorResponse.error.message.split(' ')[0] === 'Error:') {

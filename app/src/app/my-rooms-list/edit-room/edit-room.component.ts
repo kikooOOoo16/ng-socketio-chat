@@ -42,6 +42,7 @@ export class EditRoomComponent implements OnInit {
 
   deleteRoom = () => {
     this.socketService.deleteRoom(this.editedRoom._id!);
+    this.resetForm();
   }
 
   editRoomFormSubmit = async() => {

@@ -34,6 +34,38 @@ export class SocketService {
     });
   }
 
+  // send editRoom socketIO request to server
+  editRoom = async (editedRoom: Room) => {
+    let err = '';
+    await this.socket.emit('editRoom', {room: editedRoom}, (callback: { message: string; field?: string }[]) => {
+      if (callback && callback.length && callback[0].message && callback[0].message.split(' ')[0] === 'Error:') {
+
+        this.socketHelperService.checkIfUserTokenExpired(callback[0].message);
+        err = callback[0].message
+        this.alertService.onAlertReceived(callback[0].message);
+      }
+    });
+    if (err === '') {
+      this.alertService.onAlertReceived('Info: Successfully edited room.');
+    }
+    return {err};
+  }
+
+  // send deleteRoom socketIO request to server
+  deleteRoom = (roomId: string) => {
+    let err = false;
+    // send socketIO request
+    this.socket.emit('deleteRoom', {roomId}, (callback: { message: string; field?: string }[]) => {
+
+      const {err: handleErrState} = this.socketHelperService.handleCallbackEmitWhenNotInRoom(callback);
+      err = handleErrState;
+    });
+
+    if (!err) {
+      this.alertService.onAlertReceived('Info: Successfully deleted room.');
+    }
+  }
+
   // Send fetchRoom SocketIO request
   fetchRoom = (roomName: string) => {
     console.log('Send fetchRoom request.');
@@ -82,7 +114,6 @@ export class SocketService {
 
   // Send socketIO joinRoom request to the server
   joinRoom = (roomName: string) => {
-    console.log('Send JoinRoom request.');
     // emit the request using the socket instance
     this.socket.emit('joinRoom', {roomName}, (callback: { message: string; field?: string }[]) => {
       const {err} = this.socketHelperService.handleCallbackEmitWhenNotInRoom(callback);
@@ -129,36 +160,6 @@ export class SocketService {
   // Handle onRoomUsersUpdate SocketIO call from server
   onRoomDataUpdate = (): Observable<Room> => {
     return this.socket.fromEvent('roomDataUpdate');
-  }
-
-  // send editRoom socketIO request to server
-  editRoom = async (editedRoom: Room) => {
-    console.log(`EditedRoom id = ${editedRoom._id}`);
-    let err = '';
-    await this.socket.emit('editRoom', {room: editedRoom}, (callback: { message: string; field?: string }[]) => {
-      if (callback && callback.length && callback[0].message && callback[0].message.split(' ')[0] === 'Error:') {
-
-        this.socketHelperService.checkIfUserTokenExpired(callback[0].message);
-        err = callback[0].message
-        this.alertService.onAlertReceived(callback[0].message);
-      }
-    });
-    if (err === '') {
-      this.alertService.onAlertReceived('Info: Successfully edited room.');
-    }
-    return {err};
-  }
-
-  // send deleteRoom socketIO request to server
-  deleteRoom = (roomId: string) => {
-    // send socketIO request
-    this.socket.emit('deleteRoom', {roomId}, (callback: { message: string; field?: string }[]) => {
-      const {err} = this.socketHelperService.handleCallbackEmitWhenNotInRoom(callback);
-
-      if (!err) {
-        this.alertService.onAlertReceived('Info: Successfully deleted room.');
-      }
-    });
   }
 
   // Send message socketIO request to server

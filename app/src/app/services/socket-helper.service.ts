@@ -36,6 +36,9 @@ export class SocketHelperService {
       // if token expired logout user.
       this.authService.handleUserStateOnLogout();
       return;
+    } else if (callbackMessage === 'Error: Problem verifying user token.') {
+      this.authService.handleUserStateOnLogout();
+      return;
     }
   }
 
