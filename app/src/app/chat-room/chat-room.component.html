@@ -1,0 +1,92 @@
+<ng-template appPlaceholder></ng-template>
+<div class="container mx-0">
+  <div class="row">
+    <div class="col-12">
+      <div class="card chat-app">
+        <div class="row">
+          <div class="chat-side col-md-3 col-lg-3">
+            <div class="people-list">
+              <ul class="chat-list mt-2 mb-0">
+                <div *ngIf="room.usersInRoom && room.usersInRoom.length > 0; else noUsers">
+                  <li *ngFor="let user of room.usersInRoom" class="clearfix" (click)="showAdminOptions(user)">
+                    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
+                    <div class="about">
+                      <div class="name">{{user._id === room.author ? 'Admin: ': ''}}{{ user.name }}</div>
+                      <div class="status"><i class="fa fa-circle online"></i> Online</div>
+                    </div>
+                    <div class="d-flex flex-column admin-user-options-menu">
+                      <div class="admin-user-options">Kick</div>
+                      <div class="admin-user-options">Ban</div>
+                    </div>
+                  </li>
+                </div>
+                <ng-template #noUsers>
+                  <li>
+                    <div class="about">
+                      There are currently no active users in this room.
+                    </div>
+                  </li>
+                </ng-template>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-9 col-lg-9">
+            <div class="chat">
+              <div class="chat-header clearfix">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="chat-about">
+                      <h6 class="mb-2 pb-2">{{room.name}}</h6>
+                      <small *ngIf="lastMessageSent !== ''" class="text-muted">Last message: {{lastMessageSent}}
+                        ago</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div #chatHistory class="chat-history">
+                <ul *ngIf="chatMessages && chatMessages.length > 0; else noMessages" class="m-b-0">
+                  <li [ngClass]="{'user-message' : message.author.id === userId!}" *ngFor="let message of chatMessages"
+                      class="clearfix">
+                    <div class="message-data">
+                      <span class="message-data-time text-muted">{{message.author.name}}
+                        : {{ message.createdAtUnixTime |  date:'dd/MM/yyyy HH:mm'}}</span>
+                    </div>
+                    <div
+                      [ngClass]="{'my-message' : message.author.id === userId!, 'other-message' : message.author.id !== userId!, 'edited-message': message.edited && message.edited === true}"
+                      class="message ">
+                      {{message.text}}
+                      <span class="edited-message-mark" *ngIf="message.edited && message.edited === true">
+                        <p class="text-muted">edited</p>
+                      </span>
+                      <span *ngIf="message.author.id === userId!" class="message-edit-btn" (click)="editChatMessage(message)">
+                        <fa-icon [icon]="faEdit"></fa-icon>
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+                <ng-template #noMessages>
+                  <ul class="m-b-0">
+                    <li class="clearfix">
+                      Chat is empty.
+                    </li>
+                  </ul>
+                </ng-template>
+              </div>
+              <div class="chat-message clearfix">
+                <div class="input-group mb-0">
+                  <div>
+                    <span class="input-group-text">
+                      <fa-icon class="pr-1" [icon]="faMessage"></fa-icon>
+                    </span>
+                  </div>
+                  <input #chatInput (keyup.enter)="sendMessage()" type="text" class="form-control"
+                         placeholder="Enter text here..." autocomplete="false">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

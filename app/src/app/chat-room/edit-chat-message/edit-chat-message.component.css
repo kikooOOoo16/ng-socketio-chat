@@ -1,0 +1,52 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 50;
+}
+
+.edit-box {
+  position: fixed;
+  border-radius: 10px;
+  top: 30vh;
+  left: 25vw;
+  width: 50vw;
+  padding: 16px;
+  z-index: 100;
+  background: #ffffff;
+  font-family: 'Muli', sans-serif;
+  font-size: 1.1em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+}
+
+.btn {
+  transition: background-color 0.4s;
+}
+
+.close-btn {
+  margin-left: 20px;
+  background-color: #d20006;
+  color: #ffffff;
+}
+
+.close-btn:hover {
+  background-color: #ff687b;
+  color: #ffffff;
+}
+
+.edit-btn {
+  margin-right: 20px;
+  background-color: #08799c;
+  color: #ffffff;
+}
+
+.edit-btn:hover {
+  background-color: #5fabbf;
+}
+
+.edit-btn:disabled {
+  background-color: #8c9395;
+}

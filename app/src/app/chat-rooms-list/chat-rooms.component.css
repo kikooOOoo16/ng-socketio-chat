@@ -1,0 +1,11 @@
+.room-btn {
+  border: none;
+  border-radius: 0;
+  color: #ffffff;
+  outline: none;
+  background-color: #974309;
+}
+
+.room-btn:hover {
+  background-color: #b18768;
+}

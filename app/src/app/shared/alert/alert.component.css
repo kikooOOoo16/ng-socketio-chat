@@ -1,0 +1,49 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 50;
+}
+
+.alert-box {
+  position: fixed;
+  border-radius: 10px;
+  top: 30vh;
+  left: 40vw;
+  width: 20vw;
+  padding: 16px;
+  z-index: 100;
+  background: #ffffff;
+  font-family: 'Muli', sans-serif;
+  font-size: 1.1em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+}
+
+.alert-box-actions {
+  text-align: right;
+}
+
+.btn {
+  transition: background-color 0.4s;
+}
+
+.err-alert .btn {
+  background-color: #974309;
+  color: #ffffff;
+}
+
+.err-alert .btn:hover {
+  background-color: #b47449;
+}
+
+.info-alert .btn {
+  background-color: #08799c;
+  color: #ffffff;
+}
+
+.info-alert .btn:hover {
+  background-color: #5fabbf;
+}

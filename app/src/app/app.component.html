@@ -1,0 +1,10 @@
+<app-header></app-header>
+<ng-template appPlaceholder></ng-template>
+<div class="content">
+  <div class="row">
+    <div class="col-12" [@routerAnimation]="getRouteAnimation(router)">
+      <router-outlet #router="outlet"></router-outlet>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

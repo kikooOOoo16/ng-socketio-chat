@@ -1,0 +1,46 @@
+<footer class="page-footer font-small pt-4 px-3">
+  <div class="container-fluid text-center text-md-left">
+    <div class="row">
+      <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+        <h6 class="text-uppercase font-weight-bold">Quantox Exercise</h6>
+        <hr class="accent-2 mb-4 mt-0 d-inline-block mx-auto">
+        <p>A simple Angular Chat App.</p>
+      </div>
+      <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+        <h6 class="text-uppercase font-weight-bold">Links</h6>
+        <hr class="accent-2 mb-4 mt-0 d-inline-block mx-auto">
+        <p *ngIf="isAuthenticated">
+          <a class="underline_from_center" routerLink="/chat-rooms-list">Chat Rooms List</a>
+        </p>
+        <p *ngIf="isAuthenticated">
+          <a class="underline_from_center" routerLink="/my-rooms-list">My Rooms List</a>
+        </p>
+        <p *ngIf="isAuthenticated">
+          <a class="underline_from_center" routerLink="/new-room">New Room</a>
+        </p>
+        <p *ngIf="!isAuthenticated">
+          <a class="underline_from_center" routerLink="/auth">Sign In</a>
+        </p>
+        <p *ngIf="isAuthenticated">
+          <a class="underline_from_center" (click)="onLogout()">Sign Out</a>
+        </p>
+      </div>
+      <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+        <h6 class="text-uppercase font-weight-bold">Contact</h6>
+        <hr class="accent-2 mb-4 mt-0 d-inline-block mx-auto">
+        <p>
+          <fa-icon class="mr-2" [icon]="faEnvelope"></fa-icon>
+          kristijan.pavlevski@quantox.com
+        </p>
+        <p>
+          <fa-icon class="mr-2" [icon]="faPhone"></fa-icon>
+          + 01 234 567 88
+        </p>
+      </div>
+    </div>
+  </div>
+  <hr class="clearfix w-100 d-md-none pb-2">
+  <div class="footer-copyright text-center py-3">
+    © 2022 Copyright
+  </div>
+</footer>

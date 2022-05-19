@@ -1,0 +1,33 @@
+<app-chat-room-options></app-chat-room-options>
+<div class="row my-4 text-center">
+  <h3>My Rooms</h3>
+  <hr>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-lg-10 mx-auto roomsList-content">
+    <app-edit-room [selectedRoomSubj]="selectedRoomSubj"></app-edit-room>
+    <div class="text-center">
+      <h4 *ngIf="roomsList && roomsList.length; else noRoomBlock">Select the room you wish to edit.</h4>
+      <ng-template #noRoomBlock>
+        <h4>You currently have no created rooms.</h4>
+      </ng-template>
+    </div>
+    <hr class="my-4">
+    <div *ngIf="roomsList && roomsList.length" class="d-flex flex-column align-items-center">
+      <a class="rooms-list"
+         *ngFor="let room of roomsList; let i = index" (click)="onEditRoom(room._id!)">
+        {{room.name}}
+        <div class="created-at">
+          Created at: {{room.createdAt |  date:'dd/MM/yyyy HH:mm'}}
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+<div class="row mt-3 mb-5 justify-content-center">
+  <div class="col-10 text-center">
+    <button class="btn w-25 rounded-0 font-weight-bold mt-2" routerLink="/chat-rooms-list">Back to All Rooms</button>
+  </div>
+</div>
+
